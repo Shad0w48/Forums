@@ -1,13 +1,13 @@
 package com.ilya.forums.model;
 
 public class Post {
-    String id, title, content, authorid, timestamp, upVote, downVote, communityid;
+    String postId, title, content, authorid, timestamp, upVote, downVote, communityid;
 
     public Post() {
     }
 
-    public Post(String id, String title, String content, String authorid, String timestamp, String upVote, String downVote, String communityid) {
-        this.id = id;
+    public Post(String postId, String title, String content, String authorid, String timestamp, String upVote, String downVote, String communityid) {
+        this.postId = postId;
         this.title = title;
         this.content = content;
         this.authorid = authorid;
@@ -27,12 +27,12 @@ public class Post {
         this.communityid = communityid;
     }
 
-    public String getId() {
-        return id;
+    public String getPostId() {
+        return postId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setPostId(String id) {
+        this.postId = id;
     }
 
     public String getTitle() {
@@ -94,7 +94,7 @@ public class Post {
     @Override
     public String toString() {
         return "Post{" +
-                "id='" + id + '\'' +
+                "id='" + postId + '\'' +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", authorid='" + authorid + '\'' +

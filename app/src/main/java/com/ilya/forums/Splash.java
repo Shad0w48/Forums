@@ -23,7 +23,7 @@ public class Splash extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        imageView=(ImageView) findViewById(R.id.imageView);
+        imageView=(ImageView) findViewById(R.id.imageView2);
         Thread mSplashThread = new Thread(){
           @Override
           public void run(){

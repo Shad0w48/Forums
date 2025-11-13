@@ -1,16 +1,25 @@
 package com.ilya.forums.model;
 
 public class Comment {
-    String author, timestamp, text, parentpostid;
+    String author, timestamp, text, parentpostid, authorId;
 
     public Comment() {
     }
 
-    public Comment(String author, String timestamp, String text, String parentpostid) {
+    public Comment(String author, String timestamp, String text, String parentpostid,String authorId) {
         this.author = author;
+        this.authorId=authorId;
         this.timestamp = timestamp;
         this.text = text;
         this.parentpostid = parentpostid;
+    }
+
+    public String getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
     }
 
     public String getAuthor() {
@@ -45,13 +54,15 @@ public class Comment {
         this.parentpostid = parentpostid;
     }
 
+
     @Override
     public String toString() {
-        return "Vote{" +
+        return "Comment{" +
                 "author='" + author + '\'' +
                 ", timestamp='" + timestamp + '\'' +
                 ", text='" + text + '\'' +
                 ", parentpostid='" + parentpostid + '\'' +
+                ", authorId='" + authorId + '\'' +
                 '}';
     }
 }
