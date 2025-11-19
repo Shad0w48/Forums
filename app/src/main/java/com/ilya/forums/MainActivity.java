@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         if(v==Btnsignup){
-            Go= new Intent(this, SignUpPage.class);
+            Go= new Intent(this, RegisterActivity.class);
             startActivity(Go);
         }
     }

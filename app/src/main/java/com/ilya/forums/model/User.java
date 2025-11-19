@@ -2,6 +2,25 @@ package com.ilya.forums.model;
 
 public class User {
     String id, fname, lname, email, phone, password;
+    Boolean isAdmin;
+
+    public Boolean getAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        isAdmin = admin;
+    }
+
+    public User(String id, String fname, String lname, String email, String phone, String password, Boolean isAdmin) {
+        this.id = id;
+        this.fname = fname;
+        this.lname = lname;
+        this.email = email;
+        this.phone = phone;
+        this.password = password;
+        this.isAdmin = isAdmin;
+    }
 
     public User() {
     }
