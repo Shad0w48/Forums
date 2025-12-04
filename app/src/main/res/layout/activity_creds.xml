@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="252dp"
-        android:text="עמית שטרית המלך של העיצובים תודה רבה עמית על עיצוב בלתי נשכח ימלך"
+        android:text="odot"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
