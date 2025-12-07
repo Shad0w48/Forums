@@ -1,31 +1,40 @@
 package com.ilya.forums.model;
 
 public class Post {
-    String postId, title, content, authorid, timestamp, upVote, downVote, communityid;
+    String postId, title, content, UserId, timestamp;
+
+
+    int upVote, downVote;
+
+    String ForumId;
+
+
 
     public Post() {
     }
 
-    public Post(String postId, String title, String content, String authorid, String timestamp, String upVote, String downVote, String communityid) {
+    public Post(String postId, String title, String content, String UserId, String timestamp, int upVote, int downVote, String ForumId) {
         this.postId = postId;
         this.title = title;
         this.content = content;
-        this.authorid = authorid;
+        this.UserId = UserId;
         this.timestamp = timestamp;
         this.upVote = upVote;
         this.downVote = downVote;
-        this.communityid = communityid;
+        this.ForumId = ForumId;
     }
-
-    public Post(String title, String content, String authorid, String timestamp, String upVote, String downVote, String communityid) {
+    public Post(String postId, String title, String content, String UserId, String timestamp, String ForumId) {
+        this.postId = postId;
         this.title = title;
         this.content = content;
-        this.authorid = authorid;
+        this.UserId = UserId;
         this.timestamp = timestamp;
-        this.upVote = upVote;
-        this.downVote = downVote;
-        this.communityid = communityid;
+        this.upVote = 0;
+        this.downVote = 0;
+        this.ForumId = ForumId;
     }
+
+
 
     public String getPostId() {
         return postId;
@@ -52,11 +61,11 @@ public class Post {
     }
 
     public String getAuthorid() {
-        return authorid;
+        return UserId;
     }
 
     public void setAuthorid(String authorid) {
-        this.authorid = authorid;
+        this.UserId = authorid;
     }
 
     public String getTimestamp() {
@@ -67,41 +76,27 @@ public class Post {
         this.timestamp = timestamp;
     }
 
-    public String getUpVote() {
+    public int getUpVote() {
         return upVote;
     }
 
-    public void setUpVote(String upVote) {
+    public void setUpVote(int upVote) {
         this.upVote = upVote;
     }
 
-    public String getDownVote() {
+    public int getDownVote() {
         return downVote;
     }
 
-    public void setDownVote(String downVote) {
+    public void setDownVote(int downVote) {
         this.downVote = downVote;
     }
 
-    public String getCommunityid() {
-        return communityid;
+    public String getForumId() {
+        return ForumId;
     }
 
-    public void setCommunityid(String communityid) {
-        this.communityid = communityid;
-    }
-
-    @Override
-    public String toString() {
-        return "Post{" +
-                "id='" + postId + '\'' +
-                ", title='" + title + '\'' +
-                ", content='" + content + '\'' +
-                ", authorid='" + authorid + '\'' +
-                ", timestamp='" + timestamp + '\'' +
-                ", upVote='" + upVote + '\'' +
-                ", downVote='" + downVote + '\'' +
-                ", communityid='" + communityid + '\'' +
-                '}';
+    public void setForumId(String forumId) {
+        ForumId = forumId;
     }
 }

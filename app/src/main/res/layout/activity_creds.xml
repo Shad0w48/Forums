@@ -7,13 +7,20 @@
     android:layout_height="match_parent"
     tools:context=".Creds">
 
+
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/odotHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="252dp"
-        android:text="odot"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="אודות"
+        tools:layout_editor_absoluteX="172dp"
+        tools:layout_editor_absoluteY="14dp" />
 
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        tools:layout_editor_absoluteX="176dp"
+        tools:layout_editor_absoluteY="265dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
