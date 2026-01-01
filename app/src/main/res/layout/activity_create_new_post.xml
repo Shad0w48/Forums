@@ -9,15 +9,15 @@
 
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/NewPostTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
+        android:text="New Post"
         tools:layout_editor_absoluteX="179dp"
         tools:layout_editor_absoluteY="31dp" />
 
     <ImageView
-        android:id="@+id/imageView4"
+        android:id="@+id/imgNewPost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:layout_editor_absoluteX="41dp"
@@ -25,7 +25,7 @@
         tools:src="@tools:sample/avatars" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btnGallery"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Button"
@@ -33,7 +33,7 @@
         tools:layout_editor_absoluteY="423dp" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/btnTakePic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Button"
@@ -41,11 +41,39 @@
         tools:layout_editor_absoluteY="500dp" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/btnAddNewPost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Button"
         tools:layout_editor_absoluteX="160dp"
         tools:layout_editor_absoluteY="576dp" />
+
+    <EditText
+        android:id="@+id/etNewPostTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Name"
+        tools:layout_editor_absoluteX="86dp"
+        tools:layout_editor_absoluteY="82dp" />
+
+    <EditText
+        android:id="@+id/etNewPostInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Name"
+        tools:layout_editor_absoluteX="83dp"
+        tools:layout_editor_absoluteY="151dp" />
+
+    <Button
+        android:id="@+id/btnback6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="חזור"
+        tools:layout_editor_absoluteX="160dp"
+        tools:layout_editor_absoluteY="645dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

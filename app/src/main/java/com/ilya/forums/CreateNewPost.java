@@ -42,7 +42,7 @@ public class AddItem extends AppCompatActivity {
     private Button btnGallery, btnTakePic, btnAddItem;
     private ImageView imageView;
 
-    private ImageButton btnBack;
+    private Button btnBack;
 
 
     private DatabaseService databaseService;
@@ -86,7 +86,7 @@ public class AddItem extends AppCompatActivity {
                     }
                 });
 
-        btnBack = findViewById(R.id.btnBack6);
+        btnBack = findViewById(R.id.btnback6);
 
         btnBack.setOnClickListener(v -> {
             Intent intent = new Intent(AddItem.this, AdminActivity.class);
@@ -138,7 +138,9 @@ public class AddItem extends AppCompatActivity {
                 String id = databaseService.generatePostId();
 
 
-                Post newItem = new Post(id, itemName, itemType, itemColor, itemCompany, itemInfo, price, imageBase64);
+                //Post newItem = new Post(id, itemName, itemType, itemColor, itemCompany, itemInfo, price, imageBase64);
+                Post newItem = new Post(id, itemName, itemInfo, )
+
 
                 /// save the item to the database and get the result in the callback
                 databaseService.createNewPost(newItem, new DatabaseService.DatabaseCallback<Void>() {
@@ -168,16 +170,13 @@ public class AddItem extends AppCompatActivity {
     }
 
     private void InitViews() {
-        etItemName = findViewById(R.id.etItemName);
-        etItemInfo = findViewById(R.id.etItemInfo);
-        etItemPrice = findViewById(R.id.etItemPrice);
-        spType = findViewById(R.id.spType);
-        spColor = findViewById(R.id.spColor);
-        spCompany = findViewById(R.id.spCompany);
+        etItemName = findViewById(R.id.etNewPostTitle);
+        etItemInfo = findViewById(R.id.etNewPostInfo);
+
         btnGallery = findViewById(R.id.btnGallery);
         btnTakePic = findViewById(R.id.btnTakePic);
-        btnAddItem = findViewById(R.id.btnAddItem);
-        imageView = findViewById(R.id.imageView);
+        btnAddItem = findViewById(R.id.btnAddNewPost);
+        imageView = findViewById(R.id.imgNewPost);
     }
 
 
