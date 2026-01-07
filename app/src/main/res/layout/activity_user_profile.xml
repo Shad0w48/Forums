@@ -7,4 +7,84 @@
     android:layout_height="match_parent"
     tools:context=".UserProfileActivity">
 
+    <EditText
+        android:id="@+id/et_user_first_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
+        android:hint="First Name"
+        tools:layout_editor_absoluteX="105dp"
+        tools:layout_editor_absoluteY="46dp" />
+
+    <EditText
+        android:id="@+id/et_user_last_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
+        android:hint="Last Name"
+        tools:layout_editor_absoluteX="98dp"
+        tools:layout_editor_absoluteY="109dp" />
+
+    <EditText
+        android:id="@+id/et_user_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="email"
+        android:ems="10"
+        android:inputType="textEmailAddress"
+        tools:layout_editor_absoluteX="100dp"
+        tools:layout_editor_absoluteY="172dp" />
+
+    <EditText
+        android:id="@+id/et_user_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="phone"
+        android:inputType="phone"
+        tools:layout_editor_absoluteX="95dp"
+        tools:layout_editor_absoluteY="241dp" />
+
+    <EditText
+        android:id="@+id/et_user_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPassword"
+        tools:layout_editor_absoluteX="93dp"
+        tools:layout_editor_absoluteY="307dp" />
+
+    <Button
+        android:id="@+id/btn_edit_profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="edit profile"
+        tools:layout_editor_absoluteX="43dp"
+        tools:layout_editor_absoluteY="592dp" />
+
+    <Button
+        android:id="@+id/btn_sign_out"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="sign out"
+        tools:layout_editor_absoluteX="264dp"
+        tools:layout_editor_absoluteY="596dp" />
+
+    <TextView
+        android:id="@+id/tv_user_display_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        tools:layout_editor_absoluteX="82dp"
+        tools:layout_editor_absoluteY="17dp" />
+
+    <TextView
+        android:id="@+id/tv_user_display_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        tools:layout_editor_absoluteX="235dp"
+        tools:layout_editor_absoluteY="21dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

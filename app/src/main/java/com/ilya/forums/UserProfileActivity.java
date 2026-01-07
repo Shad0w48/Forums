@@ -1,4 +1,4 @@
-package com.example.testapp.screens;
+package com.ilya.forums;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -19,9 +20,10 @@ import com.ilya.forums.model.User;
 import com.ilya.forums.services.DatabaseService;
 //import com.ilya.forums.utils.SharedPreferencesUtil;
 
-public class UserProfileActivity extends BaseActivity implements View.OnClickListener {
+public class UserProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "UserProfileActivity";
+    private DatabaseService databaseService;
 
     private EditText etUserFirstName, etUserLastName, etUserEmail, etUserPhone, etUserPassword;
     private TextView tvUserDisplayName, tvUserDisplayEmail;
@@ -102,14 +104,14 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
             public void onCompleted(User user) {
                 selectedUser = user;
                 // Set the user data to the EditText fields
-                etUserFirstName.setText(user.getFirstName());
-                etUserLastName.setText(user.getLastName());
+                etUserFirstName.setText(user.getFname());
+                etUserLastName.setText(user.getLname());
                 etUserEmail.setText(user.getEmail());
                 etUserPhone.setText(user.getPhone());
                 etUserPassword.setText(user.getPassword());
 
                 // Update display fields
-                String displayName = user.getFirstName() + " " + user.getLastName();
+                String displayName = user.getFname() + " " + user.getLname();
                 tvUserDisplayName.setText(displayName);
                 tvUserDisplayEmail.setText(user.getEmail());
 
@@ -159,15 +161,15 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
         }
 
         // Update the user object
-        selectedUser.setFirstName(firstName);
-        selectedUser.setLastName(lastName);
+        selectedUser.setFname(firstName);
+        selectedUser.setLname(lastName);
         selectedUser.setPhone(phone);
         selectedUser.setEmail(email);
         selectedUser.setPassword(password);
 
         // Update the user data in the authentication
         Log.d(TAG, "Updating user profile");
-        Log.d(TAG, "Selected user UID: " + selectedUser.getUid());
+        Log.d(TAG, "Selected user UID: " + selectedUser.getId());
         Log.d(TAG, "Is current user: " + isCurrentUser);
         Log.d(TAG, "User email: " + selectedUser.getEmail());
         Log.d(TAG, "User password: " + selectedUser.getPassword());
@@ -189,7 +191,7 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void updateUserInDatabase(User user) {
-        Log.d(TAG, "Updating user in database: " + user.getUid());
+        Log.d(TAG, "Updating user in database: " + user.getId());
         databaseService.updateUser(user, new DatabaseService.DatabaseCallback<Void>() {
             @Override
             public void onCompleted(Void result) {

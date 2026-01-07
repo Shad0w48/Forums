@@ -35,11 +35,10 @@ import com.ilya.forums.model.Post;
 import com.ilya.forums.services.DatabaseService;
 import com.ilya.forums.utils.ImageUtil;
 
-public class AddItem extends AppCompatActivity {
+public class AddPost extends AppCompatActivity {
 
-    private EditText etItemName, etItemInfo, etItemPrice;
-    private Spinner spType, spColor,spCompany;
-    private Button btnGallery, btnTakePic, btnAddItem;
+    private EditText etPostName, etPostInfo;
+    private Button btnGallery, btnTakePic, btnAddPost;
     private ImageView imageView;
 
     private Button btnBack;
@@ -89,7 +88,7 @@ public class AddItem extends AppCompatActivity {
         btnBack = findViewById(R.id.btnback6);
 
         btnBack.setOnClickListener(v -> {
-            Intent intent = new Intent(AddItem.this, AdminActivity.class);
+            Intent intent = new Intent(AddPost.this, AdminActivity.class);
             startActivity(intent);
             finish();
         });
@@ -114,44 +113,44 @@ public class AddItem extends AppCompatActivity {
             }
         });
 
-        btnAddItem.setOnClickListener(new View.OnClickListener() {
+        btnAddPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String itemName = etItemName.getText().toString();
-                String itemInfo = etItemInfo.getText().toString();
-                String itemPrice = etItemPrice.getText().toString();
-                String itemType = spType.getSelectedItem().toString();
-                String itemColor = spColor.getSelectedItem().toString();
-                String itemCompany = spCompany.getSelectedItem().toString();
+                String postName = etPostName.getText().toString();
+                String postInfo = etPostInfo.getText().toString();
+
+                String postType = spType.getSelectedPost().toString();
+
 
                 String imageBase64 = ImageUtil.convertTo64Base(imageView);
-                double price = Double.parseDouble(itemPrice);
+                double price = Double.parseDouble(postPrice);
 
-                if (itemName.isEmpty() || itemCompany.isEmpty() || itemInfo.isEmpty() ||
-                        itemPrice.isEmpty() || itemType.isEmpty() || itemColor.isEmpty()) {
-                    Toast.makeText(AddItem.this, "אנא מלא את כל השדות", Toast.LENGTH_SHORT).show();
+                if (postName.isEmpty() || postCompany.isEmpty() || postInfo.isEmpty() ||
+                        postPrice.isEmpty() || postType.isEmpty() || postColor.isEmpty()) {
+                    Toast.makeText(AddPost.this, "אנא מלא את כל השדות", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(AddItem.this, "המוצר נוסף בהצלחה!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddPost.this, "המוצר נוסף בהצלחה!", Toast.LENGTH_SHORT).show();
                 }
 
-                /// generate a new id for the item
+                /// generate a new id for the post
                 String id = databaseService.generatePostId();
+                String UID=
+
+                //Post newPost = new Post(id, postName, postType, postColor, postCompany, postInfo, price, imageBase64);
+                //public Post(String postId, String title, String content, String UserId, String timestamp, String ForumId)
+                Post newPost = new Post(id, postName, postInfo, )
 
 
-                //Post newItem = new Post(id, itemName, itemType, itemColor, itemCompany, itemInfo, price, imageBase64);
-                Post newItem = new Post(id, itemName, itemInfo, )
-
-
-                /// save the item to the database and get the result in the callback
-                databaseService.createNewPost(newItem, new DatabaseService.DatabaseCallback<Void>() {
+                /// save the post to the database and get the result in the callback
+                databaseService.createNewPost(newPost, new DatabaseService.DatabaseCallback<Void>() {
                     @Override
                     public void onCompleted(Void object) {
-                        Log.d("TAG", "Item added successfully");
-                        Toast.makeText(AddItem.this, "Item added successfully", Toast.LENGTH_SHORT).show();
-                        /// clear the input fields after adding the item for the next item
+                        Log.d("TAG", "Post added successfully");
+                        Toast.makeText(AddPost.this, "Post added successfully", Toast.LENGTH_SHORT).show();
+                        /// clear the input fields after adding the post for the next post
                         Log.d("TAG", "Clearing input fields");
 
-                        Intent intent = new Intent(AddItem.this, AdminActivity.class);
+                        Intent intent = new Intent(AddPost.this, AdminActivity.class);
                         startActivity(intent);
 
 
@@ -159,8 +158,8 @@ public class AddItem extends AppCompatActivity {
 
                     @Override
                     public void onFailed(Exception e) {
-                        Log.e("TAG", "Failed to add item", e);
-                        Toast.makeText(AddItem.this, "Failed to add food", Toast.LENGTH_SHORT).show();
+                        Log.e("TAG", "Failed to add post", e);
+                        Toast.makeText(AddPost.this, "Failed to add food", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -170,12 +169,12 @@ public class AddItem extends AppCompatActivity {
     }
 
     private void InitViews() {
-        etItemName = findViewById(R.id.etNewPostTitle);
-        etItemInfo = findViewById(R.id.etNewPostInfo);
+        etPostName = findViewById(R.id.etNewPostTitle);
+        etPostInfo = findViewById(R.id.etNewPostInfo);
 
         btnGallery = findViewById(R.id.btnGallery);
         btnTakePic = findViewById(R.id.btnTakePic);
-        btnAddItem = findViewById(R.id.btnAddNewPost);
+        btnAddPost = findViewById(R.id.btnAddNewPost);
         imageView = findViewById(R.id.imgNewPost);
     }
 

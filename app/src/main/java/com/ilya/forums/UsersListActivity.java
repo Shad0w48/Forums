@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -21,11 +22,13 @@ import com.ilya.forums.services.DatabaseService;
 
 import java.util.List;
 
-public class UsersListActivity extends BaseActivity {
+public class UsersListActivity extends AppCompatActivity {
 
     private static final String TAG = "UsersListActivity";
     private UserAdapter userAdapter;
     private TextView tvUserCount;
+    private DatabaseService databaseService;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

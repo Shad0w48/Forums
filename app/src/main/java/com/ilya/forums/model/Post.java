@@ -1,12 +1,12 @@
 package com.ilya.forums.model;
 
 public class Post {
-    String postId, title, content, UserId, timestamp;
+    String postId, title, content, userId, timestamp;
 
 
     int upVote, downVote;
 
-    String ForumId;
+    String forumId;
 
 
 
@@ -17,21 +17,21 @@ public class Post {
         this.postId = postId;
         this.title = title;
         this.content = content;
-        this.UserId = UserId;
+        this.userId = UserId;
         this.timestamp = timestamp;
         this.upVote = upVote;
         this.downVote = downVote;
-        this.ForumId = ForumId;
+        this.forumId = ForumId;
     }
     public Post(String postId, String title, String content, String UserId, String timestamp, String ForumId) {
         this.postId = postId;
         this.title = title;
         this.content = content;
-        this.UserId = UserId;
+        this.userId = UserId;
         this.timestamp = timestamp;
         this.upVote = 0;
         this.downVote = 0;
-        this.ForumId = ForumId;
+        this.forumId = ForumId;
     }
 
 
@@ -61,11 +61,11 @@ public class Post {
     }
 
     public String getAuthorid() {
-        return UserId;
+        return userId;
     }
 
     public void setAuthorid(String authorid) {
-        this.UserId = authorid;
+        this.userId = authorid;
     }
 
     public String getTimestamp() {
@@ -93,10 +93,10 @@ public class Post {
     }
 
     public String getForumId() {
-        return ForumId;
+        return forumId;
     }
 
     public void setForumId(String forumId) {
-        ForumId = forumId;
+        forumId = forumId;
     }
 }
