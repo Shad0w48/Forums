@@ -46,20 +46,20 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
 
 
         selectedUid = getIntent().getStringExtra("USER_UID");
-        User currentUser = SharedPreferencesUtil.getUser(this);
-        assert currentUser != null;
+     //   User currentUser = SharedPreferencesUtil.getUser(this);
+   //     assert currentUser != null;
 
-        if (selectedUid == null) {
-            selectedUid = currentUser.getUid();
-        }
-        isCurrentUser = selectedUid.equals(currentUser.getUid());
-        if (!currentUser.isAdmin()) {
+    //    if (selectedUid == null) {
+    //        selectedUid = currentUser.getId();
+     //   }
+     //   isCurrentUser = selectedUid.equals(currentUser.getId());
+     //   if (!currentUser.isAdmin()) {
             // If the user is not an admin and the selected user is not the current user
             // then finish the activity
-            Toast.makeText(this, "You are not authorized to view this profile", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
+     //       Toast.makeText(this, "You are not authorized to view this profile", Toast.LENGTH_SHORT).show();
+     //       finish();
+     //       return;
+     //   }
 
         Log.d(TAG, "Selected user: " + selectedUid);
 
@@ -73,7 +73,7 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
         tvUserDisplayEmail = findViewById(R.id.tv_user_display_email);
         btnUpdateProfile = findViewById(R.id.btn_edit_profile);
         btnSignOut = findViewById(R.id.btn_sign_out);
-        adminBadge = findViewById(R.id.admin_badge);
+     //   adminBadge = findViewById(R.id.admin_badge);
 
         btnUpdateProfile.setOnClickListener(this);
         btnSignOut.setOnClickListener(this);
@@ -93,7 +93,7 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
             return;
         }
         if(v.getId() == R.id.btn_sign_out) {
-            signOut();
+   //         signOut();
         }
     }
 
@@ -116,7 +116,7 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
                 tvUserDisplayEmail.setText(user.getEmail());
 
                 // Show/hide admin badge based on user's admin status
-                if (user.isAdmin()) {
+                if (user.getIsAdmin()) {
                     adminBadge.setVisibility(View.VISIBLE);
                     Log.d(TAG, "User is admin, showing admin badge");
                 } else {
@@ -155,10 +155,10 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
         String email = etUserEmail.getText().toString();
         String password = etUserPassword.getText().toString();
 
-        if (!isValid(firstName, lastName, phone, email, password)) {
-            Log.e(TAG, "Invalid input");
-            return;
-        }
+//        if (!isValid(firstName, lastName, phone, email, password)) {
+//            Log.e(TAG, "Invalid input");
+//            return;
+//        }
 
         // Update the user object
         selectedUser.setFname(firstName);
@@ -176,7 +176,7 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
 
 
 
-        if (!isCurrentUser && !selectedUser.isAdmin()) {
+        if (!isCurrentUser && !selectedUser.getAdmin()) {
             Log.e(TAG, "Only the current user can update their profile");
             Toast.makeText(this, "You can only update your own profile", Toast.LENGTH_SHORT).show();
             return;
@@ -184,7 +184,7 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
         else if (isCurrentUser) {
             updateUserInDatabase(selectedUser);
         }
-        else if (selectedUser.isAdmin()) {
+        else if (selectedUser.getIsAdmin()) {
             // update the user in the database
             updateUserInDatabase(selectedUser);
         }
@@ -208,42 +208,42 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
         });
     }
 
-    private boolean isValid(String firstName, String lastName, String phone, String email, String password) {
-        if (!Validator.isNameValid(firstName)) {
-            etUserFirstName.setError("First name is required");
-            etUserFirstName.requestFocus();
-            return false;
-        }
-        if (!Validator.isNameValid(lastName)) {
-            etUserLastName.setError("Last name is required");
-            etUserLastName.requestFocus();
-            return false;
-        }
-        if (!Validator.isPhoneValid(phone)) {
-            etUserPhone.setError("Phone number is required");
-            etUserPhone.requestFocus();
-            return false;
-        }
-        if (!Validator.isEmailValid(email)) {
-            etUserEmail.setError("Email is required");
-            etUserEmail.requestFocus();
-            return false;
-        }
-        if (!Validator.isPasswordValid(password)) {
-            etUserPassword.setError("Password is required");
-            etUserPassword.requestFocus();
-            return false;
-        }
-        return true;
-    }
+//    private boolean isValid(String firstName, String lastName, String phone, String email, String password) {
+//        if (!Validator.isNameValid(firstName)) {
+//            etUserFirstName.setError("First name is required");
+//            etUserFirstName.requestFocus();
+//            return false;
+//        }
+//        if (!Validator.isNameValid(lastName)) {
+//            etUserLastName.setError("Last name is required");
+//            etUserLastName.requestFocus();
+//            return false;
+//        }
+//        if (!Validator.isPhoneValid(phone)) {
+//            etUserPhone.setError("Phone number is required");
+//            etUserPhone.requestFocus();
+//            return false;
+//        }
+//        if (!Validator.isEmailValid(email)) {
+//            etUserEmail.setError("Email is required");
+//            etUserEmail.requestFocus();
+//            return false;
+//        }
+//        if (!Validator.isPasswordValid(password)) {
+//            etUserPassword.setError("Password is required");
+//            etUserPassword.requestFocus();
+//            return false;
+//        }
+//        return true;
+//    }
+//
+  //   private void signOut() {
+//        Log.d(TAG, "Sign out button clicked");
+  //      SharedPreferencesUtil.signOutUser(UserProfileActivity.this);
 
-    private void signOut() {
-        Log.d(TAG, "Sign out button clicked");
-        SharedPreferencesUtil.signOutUser(UserProfileActivity.this);
-
-        Log.d(TAG, "User signed out, redirecting to LandingActivity");
-        Intent landingIntent = new Intent(UserProfileActivity.this, LandingActivity.class);
-        landingIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(landingIntent);
-    }
+ //       Log.d(TAG, "User signed out, redirecting to LandingActivity");
+  //      Intent landingIntent = new Intent(UserProfileActivity.this, LandingActivity.class);
+ //       landingIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+  //      startActivity(landingIntent);
+ //   }
 }

@@ -43,22 +43,21 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         User user = userList.get(position);
         if (user == null) return;
 
-        holder.tvName.setText(user.getFullName());
         holder.tvEmail.setText(user.getEmail());
         holder.tvPhone.setText(user.getPhone());
         
         // Set initials
         String initials = "";
-        if (user.getFirstName() != null && !user.getFirstName().isEmpty()) {
-            initials += user.getFirstName().charAt(0);
+        if (user.getFname() != null && !user.getFname().isEmpty()) {
+            initials += user.getFname().charAt(0);
         }
-        if (user.getLastName() != null && !user.getLastName().isEmpty()) {
-            initials += user.getLastName().charAt(0);
+        if (user.getLname() != null && !user.getLname().isEmpty()) {
+            initials += user.getLname().charAt(0);
         }
         holder.tvInitials.setText(initials.toUpperCase());
         
         // Show admin chip if user is admin
-        if (user.isAdmin()) {
+        if (user.getIsAdmin()) {
             holder.chipRole.setVisibility(View.VISIBLE);
             holder.chipRole.setText("Admin");
         } else {

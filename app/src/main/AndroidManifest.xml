@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Forums">
         <activity
+            android:name=".CreateNewForum"
+            android:exported="false" />
+        <activity
             android:name=".UserProfileActivity"
             android:exported="false" />
         <activity

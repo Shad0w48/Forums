@@ -35,7 +35,7 @@ import com.ilya.forums.model.Post;
 import com.ilya.forums.services.DatabaseService;
 import com.ilya.forums.utils.ImageUtil;
 
-public class AddPost extends AppCompatActivity {
+public class CreateNewPost extends AppCompatActivity {
 
     private EditText etPostName, etPostInfo;
     private Button btnGallery, btnTakePic, btnAddPost;
@@ -51,7 +51,6 @@ public class AddPost extends AppCompatActivity {
     private ActivityResultLauncher<Intent> captureImageLauncher;
 
 
-
     // constant to compare
     // the activity result code
     int SELECT_PICTURE = 200;
@@ -59,177 +58,19 @@ public class AddPost extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_create_new_post);
 
-
-
-        InitViews();
-
-        /// request permission for the camera and storage
-        ImageUtil.requestPermission(this);
-
-        /// get the instance of the database service
-        databaseService = DatabaseService.getInstance();
-
-
-
-
-
-        /// register the activity result launcher for capturing image from camera
-        captureImageLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                        Bitmap bitmap = (Bitmap) result.getData().getExtras().get("data");
-                        imageView.setImageBitmap(bitmap);
-                    }
-                });
-
-        btnBack = findViewById(R.id.btnback6);
-
-        btnBack.setOnClickListener(v -> {
-            Intent intent = new Intent(AddPost.this, AdminActivity.class);
-            startActivity(intent);
-            finish();
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
         });
-
-
-
-
-        btnGallery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectImageFromGallery();
-
-
-            }
-        });
-
-        btnTakePic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                captureImageFromCamera();
-
-            }
-        });
-
-        btnAddPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String postName = etPostName.getText().toString();
-                String postInfo = etPostInfo.getText().toString();
-
-                String postType = spType.getSelectedPost().toString();
-
-
-                String imageBase64 = ImageUtil.convertTo64Base(imageView);
-                double price = Double.parseDouble(postPrice);
-
-                if (postName.isEmpty() || postCompany.isEmpty() || postInfo.isEmpty() ||
-                        postPrice.isEmpty() || postType.isEmpty() || postColor.isEmpty()) {
-                    Toast.makeText(AddPost.this, "אנא מלא את כל השדות", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(AddPost.this, "המוצר נוסף בהצלחה!", Toast.LENGTH_SHORT).show();
-                }
-
-                /// generate a new id for the post
-                String id = databaseService.generatePostId();
-                String UID=
-
-                //Post newPost = new Post(id, postName, postType, postColor, postCompany, postInfo, price, imageBase64);
-                //public Post(String postId, String title, String content, String UserId, String timestamp, String ForumId)
-                Post newPost = new Post(id, postName, postInfo, )
-
-
-                /// save the post to the database and get the result in the callback
-                databaseService.createNewPost(newPost, new DatabaseService.DatabaseCallback<Void>() {
-                    @Override
-                    public void onCompleted(Void object) {
-                        Log.d("TAG", "Post added successfully");
-                        Toast.makeText(AddPost.this, "Post added successfully", Toast.LENGTH_SHORT).show();
-                        /// clear the input fields after adding the post for the next post
-                        Log.d("TAG", "Clearing input fields");
-
-                        Intent intent = new Intent(AddPost.this, AdminActivity.class);
-                        startActivity(intent);
-
-
-                    }
-
-                    @Override
-                    public void onFailed(Exception e) {
-                        Log.e("TAG", "Failed to add post", e);
-                        Toast.makeText(AddPost.this, "Failed to add food", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-
-        });
-    }
-
-    private void InitViews() {
-        etPostName = findViewById(R.id.etNewPostTitle);
-        etPostInfo = findViewById(R.id.etNewPostInfo);
-
-        btnGallery = findViewById(R.id.btnGallery);
-        btnTakePic = findViewById(R.id.btnTakePic);
-        btnAddPost = findViewById(R.id.btnAddNewPost);
-        imageView = findViewById(R.id.imgNewPost);
-    }
-
-
-    /// select image from gallery
-    private void selectImageFromGallery() {
-        //   Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        //  selectImageLauncher.launch(intent);
-
-        imageChooser();
-    }
-
-    /// capture image from camera
-    private void captureImageFromCamera() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        captureImageLauncher.launch(takePictureIntent);
-    }
-
-
-
-
-
-    void imageChooser() {
-
-        // create an instance of the
-        // intent of the type image
-        Intent i = new Intent();
-        i.setType("image/*");
-        i.setAction(Intent.ACTION_GET_CONTENT);
-
-        // pass the constant to compare it
-        // with the returned requestCode
-        startActivityForResult(Intent.createChooser(i, "Select Picture"), SELECT_PICTURE);
-    }
-
-    // this function is triggered when user
-    // selects the image from the imageChooser
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == RESULT_OK) {
-
-            // compare the resultCode with the
-            // SELECT_PICTURE constant
-            if (requestCode == SELECT_PICTURE) {
-                // Get the url of the image from data
-                Uri selectedImageUri = data.getData();
-                if (null != selectedImageUri) {
-                    // update the preview image in the layout
-                    imageView.setImageURI(selectedImageUri);
-                }
-            }
-        }
     }
 }
+
+
+
 
 
 

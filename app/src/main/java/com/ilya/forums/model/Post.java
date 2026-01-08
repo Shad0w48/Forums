@@ -1,33 +1,39 @@
 package com.ilya.forums.model;
 
 public class Post {
-    String postId, title, content, userId, timestamp;
+    String postId, title, content,  timestamp;
+    User user;
 
 
     int upVote, downVote;
 
     String forumId;
+    String postPic;
 
 
 
     public Post() {
     }
 
-    public Post(String postId, String title, String content, String UserId, String timestamp, int upVote, int downVote, String ForumId) {
+
+    public Post(String postId, String title, String content, String timestamp, User user, int upVote, int downVote, String forumId, String postPic) {
         this.postId = postId;
         this.title = title;
         this.content = content;
-        this.userId = UserId;
         this.timestamp = timestamp;
+        this.user = user;
         this.upVote = upVote;
         this.downVote = downVote;
-        this.forumId = ForumId;
+        this.forumId = forumId;
+        this.postPic = postPic;
     }
-    public Post(String postId, String title, String content, String UserId, String timestamp, String ForumId) {
+
+
+    public Post(String postId, String title, String content, User user, String timestamp, String ForumId) {
         this.postId = postId;
         this.title = title;
         this.content = content;
-        this.userId = UserId;
+        this.user = user;
         this.timestamp = timestamp;
         this.upVote = 0;
         this.downVote = 0;
@@ -60,12 +66,20 @@ public class Post {
         this.content = content;
     }
 
-    public String getAuthorid() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setAuthorid(String authorid) {
-        this.userId = authorid;
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public String getPostPic() {
+        return postPic;
+    }
+
+    public void setPostPic(String postPic) {
+        this.postPic = postPic;
     }
 
     public String getTimestamp() {
@@ -99,4 +113,20 @@ public class Post {
     public void setForumId(String forumId) {
         forumId = forumId;
     }
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "postId='" + postId + '\'' +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", timestamp='" + timestamp + '\'' +
+                ", user=" + user +
+                ", upVote=" + upVote +
+                ", downVote=" + downVote +
+                ", forumId='" + forumId + '\'' +
+                ", postPic='" + postPic + '\'' +
+                '}';
+    }
 }
+

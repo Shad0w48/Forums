@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.ilya.forums.model.Comment;
+import com.ilya.forums.model.Forum;
 import com.ilya.forums.model.Post;
 import com.ilya.forums.model.User;
 import com.google.firebase.database.DataSnapshot;
@@ -38,6 +39,8 @@ public class DatabaseService {
     /// @see DatabaseService#readData(String)
     private static final String USERS_PATH = "users",
                                 PostS_PATH = "Posts",
+
+                                ForumS_PATH = "Forums",
                                 CommentS_PATH = "Comments";
 
     /// callback interface for database operations
@@ -297,40 +300,6 @@ public class DatabaseService {
         deleteData(USERS_PATH + "/" + uid, callback);
     }
 
-    /// get a user by email and password
-    /// @param email the email of the user
-    /// @param password the password of the user
-    /// @param callback the callback to call when the operation is completed
-    ///            the callback will receive the user object
-    ///          if the operation fails, the callback will receive an exception
-    /// @see DatabaseCallback
-    /// @see User
-    public void getUserByEmailAndPassword(@NotNull final String email, @NotNull final String password, @NotNull final DatabaseCallback<User> callback) {
-        readData(USERS_PATH).orderByChild("email").equalTo(email).get()
-            .addOnCompleteListener(task -> {
-                if (!task.isSuccessful()) {
-                    Log.e(TAG, "Error getting data", task.getException());
-                    callback.onFailed(task.getException());
-                    return;
-                }
-                if (task.getResult().getChildrenCount() == 0) {
-                    callback.onFailed(new Exception("User not found"));
-                    return;
-                }
-                for (DataSnapshot dataSnapshot : task.getResult().getChildren()) {
-                    User user = dataSnapshot.getValue(User.class);
-                    if (user == null || !Objects.equals(user.getPassword(), password)) {
-                        callback.onFailed(new Exception("Invalid email or password"));
-                        return;
-                    }
-
-                    callback.onCompleted(user);
-                    return;
-
-                }
-            });
-    }
-
     /// check if an email already exists in the database
     /// @param email the email to check
     /// @param callback the callback to call when the operation is completed
@@ -346,6 +315,7 @@ public class DatabaseService {
                     callback.onCompleted(exists);
                 });
     }
+
 
     public void updateUser(@NotNull final User user, @Nullable final DatabaseCallback<Void> callback) {
         runTransaction(USERS_PATH + "/" + user.getId(), User.class, currentUser -> user, new DatabaseCallback<User>() {
@@ -378,7 +348,7 @@ public class DatabaseService {
     /// @see DatabaseCallback
     /// @see Post
     public void createNewPost(@NotNull final Post Post, @Nullable final DatabaseCallback<Void> callback) {
-        writeData(PostS_PATH + "/" + Post.getAuthorid(), Post, callback);
+        writeData(PostS_PATH + "/" + Post.getUser().getId(), Post, callback);
     }
 
     /// get a Post from the database
@@ -487,5 +457,49 @@ public class DatabaseService {
     }
 
     // endregion Comment section
+
+
+
+    /// generate a new id for a new Comment in the database
+    /// @return a new id for the Comment
+    /// @see #generateNewId(String)
+    /// @see Comment
+    public String generateForumId() {
+        return generateNewId(ForumS_PATH);
+    }
+
+
+    /// create a new Forum in the database
+    /// @param forum the Forum object to create
+    /// @param callback the callback to call when the operation is completed
+    ///               the callback will receive void
+    ///              if the operation fails, the callback will receive an exception
+    /// @see DatabaseCallback
+    /// @see Forum
+    public void createNewForum(@NotNull final Forum forum, @Nullable final DatabaseCallback<Void> callback) {
+        writeData(ForumS_PATH + "/" + forum.getForumId(), forum, callback);
+    }
+
+
+    /// get a forum from the database
+    /// @param forumid the id of the Forum to get
+    /// @param callback the callback to call when the operation is completed
+    ///                the callback will receive the Comment object
+    ///               if the operation fails, the callback will receive an exception
+    /// @see DatabaseCallback
+    /// @see Forum
+    public void getForum(@NotNull final String forumid, @NotNull final DatabaseCallback<Forum> callback) {
+        getData(ForumS_PATH + "/" + forumid, Forum.class, callback);
+    }
+
+    /// get all the Comments from the database
+    /// @param callback the callback to call when the operation is completed
+    ///               the callback will receive a list of Comment objects
+    ///
+    public void getForumList(@NotNull final DatabaseCallback<List<Forum>> callback) {
+        getDataList(ForumS_PATH, Forum.class, callback);
+    }
+
+
 
 }

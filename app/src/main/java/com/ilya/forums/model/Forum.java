@@ -1,6 +1,8 @@
 package com.ilya.forums.model;
 
-import java.sql.Timestamp;
+
+import com.google.firebase.Timestamp;
+
 import java.util.List;
 
 public class Forum {
