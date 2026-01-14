@@ -13,7 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class AdminActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button btnAddForum;
+    Button btnAddForum, btnUserManage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,13 +26,19 @@ public class AdminActivity extends AppCompatActivity implements View.OnClickList
         });
         btnAddForum=findViewById(R.id.btnAddForum);
         btnAddForum.setOnClickListener(this);
+        btnUserManage=findViewById(R.id.btnUserManage);
+        btnUserManage.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         if(v==btnAddForum){
-            Intent goToAddForum=new Intent(this,CreateNewForum.class);
-            startActivity(goToAddForum);
+            Intent go=new Intent(this,CreateNewForum.class);
+            startActivity(go);
+        }
+        if(v==btnUserManage){
+            Intent goUL=new Intent(this,UsersListActivity.class);
+            startActivity(goUL);
         }
     }
 }

@@ -41,6 +41,8 @@ public class UsersListActivity extends AppCompatActivity {
             return insets;
         });
 
+
+        databaseService=DatabaseService.getInstance();
         RecyclerView usersList = findViewById(R.id.rv_users_list);
         tvUserCount = findViewById(R.id.tv_user_count);
         usersList.setLayoutManager(new LinearLayoutManager(this));
@@ -72,6 +74,7 @@ public class UsersListActivity extends AppCompatActivity {
             public void onCompleted(List<User> users) {
                 userAdapter.setUserList(users);
                 tvUserCount.setText("Total users: " + users.size());
+                userAdapter.notifyDataSetChanged();
             }
 
             @Override

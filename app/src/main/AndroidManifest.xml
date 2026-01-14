@@ -18,7 +18,7 @@
             android:name=".UserProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".UserTable"
+            android:name=".UsersListActivity"
             android:exported="false" />
         <activity
             android:name=".CreateNewPost"
@@ -35,9 +35,7 @@
         <activity
             android:name=".Splash"
             android:exported="false" />
-        <activity
-            android:name=".SignUpPage"
-            android:exported="false" />
+
         <activity
             android:name=".Creds"
             android:exported="false" />
