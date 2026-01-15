@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.ilya.forums.model.User;
@@ -23,6 +24,7 @@ public class UserMain extends AppCompatActivity implements View.OnClickListener 
     String userId;
     Button btnAdminPage;
 
+    RecyclerView recyclerView;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -35,6 +37,8 @@ public class UserMain extends AppCompatActivity implements View.OnClickListener 
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        RecyclerView recyclerView = findViewById(R.id.rvpostRecyclerView);
+
         databaseService = DatabaseService.getInstance();
         mAuth = FirebaseAuth.getInstance();
         btnAdminPage = findViewById(R.id.btnAdminPage);

@@ -16,16 +16,31 @@
         tools:layout_editor_absoluteY="1dp"
         tools:ignore="MissingConstraints">
         <ImageView
-            android:id="@+id/imageView5"
+            android:id="@+id/imglogoUmain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:srcCompat="@mipmap/icon" />
+
         <Button
+            android:id="@+id/btnAdminPage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Admin Page"
-            android:visibility="invisible"
-            android:id="@+id/btnAdminPage"/>
+            android:visibility="invisible" />
 
-        </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvForum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/imglogoUmain"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvPost"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

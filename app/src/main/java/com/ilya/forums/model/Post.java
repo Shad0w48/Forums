@@ -16,7 +16,7 @@ public class Post {
     }
 
 
-    public Post(String postId, String title, String content, String timestamp, User user, int upVote, int downVote, String forumId, String postPic) {
+    public Post(String postId, String title, String content,  User user,String timestamp, int upVote, int downVote, String forumId, String postPic) {
         this.postId = postId;
         this.title = title;
         this.content = content;
@@ -29,7 +29,7 @@ public class Post {
     }
 
 
-    public Post(String postId, String title, String content, User user, String timestamp, String ForumId) {
+    public Post(String postId, String title, String content, User user, String timestamp, String ForumId, String postPic) {
         this.postId = postId;
         this.title = title;
         this.content = content;
@@ -38,6 +38,7 @@ public class Post {
         this.upVote = 0;
         this.downVote = 0;
         this.forumId = ForumId;
+        this.postPic=postPic;
     }
 
 

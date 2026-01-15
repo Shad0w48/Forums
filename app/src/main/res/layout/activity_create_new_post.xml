@@ -9,7 +9,7 @@
 
 
     <TextView
-        android:id="@+id/NewPostTitle"
+        android:id="@+id/tvNewPostTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="New Post"
@@ -28,7 +28,7 @@
         android:id="@+id/btnGallery"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
+        android:text="gallery"
         tools:layout_editor_absoluteX="235dp"
         tools:layout_editor_absoluteY="423dp" />
 
@@ -36,7 +36,7 @@
         android:id="@+id/btnTakePic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
+        android:text="take pic"
         tools:layout_editor_absoluteX="240dp"
         tools:layout_editor_absoluteY="500dp" />
 
@@ -44,7 +44,7 @@
         android:id="@+id/btnAddNewPost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
+        android:text="add post"
         tools:layout_editor_absoluteX="160dp"
         tools:layout_editor_absoluteY="576dp" />
 

@@ -26,7 +26,7 @@ import com.ilya.forums.services.DatabaseService;
 import java.util.ArrayList;
 
 public class CreateNewForum extends AppCompatActivity implements View.OnClickListener {
-    private static final String TAG = "Register";
+    private static final String TAG = "Create Forum";
     TextView tvCreateForumtitle;
     Button btnCreateForum;
     EditText etTitle,etContent;
