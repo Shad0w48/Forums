@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -12,11 +13,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.ilya.forums.adapters.ForumAdapter;
+import com.ilya.forums.adapters.UserAdapter;
+import com.ilya.forums.model.Forum;
 import com.ilya.forums.model.User;
 import com.ilya.forums.services.DatabaseService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserMain extends AppCompatActivity implements View.OnClickListener {
     private DatabaseService databaseService;
@@ -24,7 +32,11 @@ public class UserMain extends AppCompatActivity implements View.OnClickListener 
     String userId;
     Button btnAdminPage;
 
-    RecyclerView recyclerView;
+    RecyclerView rvForum;
+
+    ArrayList<Forum> forumArrayList=new ArrayList<>();
+    private ForumAdapter forumAdapter;;
+
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -37,7 +49,7 @@ public class UserMain extends AppCompatActivity implements View.OnClickListener 
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        RecyclerView recyclerView = findViewById(R.id.rvpostRecyclerView);
+         rvForum = findViewById(R.id.rvForum);
 
         databaseService = DatabaseService.getInstance();
         mAuth = FirebaseAuth.getInstance();
@@ -51,6 +63,44 @@ public class UserMain extends AppCompatActivity implements View.OnClickListener 
                 if (user.getAdmin())
                     btnAdminPage.setVisibility(View.VISIBLE);
             }
+
+            @Override
+            public void onFailed(Exception e) {
+
+            }
+        });
+
+
+        rvForum.setLayoutManager(new LinearLayoutManager(this));
+        forumAdapter = new ForumAdapter(new ForumAdapter.OnForumClickListener() {
+            @Override
+            public void onForumClick(Forum forum) {
+
+            }
+
+            @Override
+            public void onLongForumClick(Forum forum) {
+
+            }
+
+
+
+        });
+        rvForum.setAdapter(forumAdapter);
+
+
+
+        databaseService.getForumList(new DatabaseService.DatabaseCallback<List<Forum>>() {
+            @Override
+            public void onCompleted(List<Forum> forums) {
+                forumArrayList.addAll(forums);
+
+                forumAdapter.notifyDataSetChanged();
+
+
+            }
+
+
 
             @Override
             public void onFailed(Exception e) {

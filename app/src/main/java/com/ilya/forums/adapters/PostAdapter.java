@@ -37,10 +37,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     @Override
     public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
         Post post = posts.get(position);
-        holder.subreddit.setText("r/" + post.subreddit);
-        holder.title.setText(post.getTitle());
-        holder.upvotes.setText("▲ " + post.upvotes);
-        holder.comments.setText("💬 " + post.comments);
+     //   holder.subreddit.setText("r/" + post.subreddit);
+      //  holder.title.setText(post.getTitle());
+     //   holder.upvotes.setText("▲ " + post.upvotes);
+     //   holder.comments.setText("💬 " + post.comments);
     }
 
     @Override
