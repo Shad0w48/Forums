@@ -12,68 +12,85 @@
         android:id="@+id/tvNewPostTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="31dp"
         android:text="New Post"
-        tools:layout_editor_absoluteX="179dp"
-        tools:layout_editor_absoluteY="31dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imgNewPost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="41dp"
-        tools:layout_editor_absoluteY="420dp"
+        android:layout_marginStart="41dp"
+        android:layout_marginBottom="28dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnAddNewPost"
+        app:layout_constraintStart_toStartOf="parent"
         tools:src="@tools:sample/avatars" />
 
     <Button
         android:id="@+id/btnGallery"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="29dp"
         android:text="gallery"
-        tools:layout_editor_absoluteX="235dp"
-        tools:layout_editor_absoluteY="423dp" />
+        app:layout_constraintBottom_toTopOf="@+id/btnTakePic"
+        app:layout_constraintEnd_toEndOf="@+id/btnTakePic" />
 
     <Button
         android:id="@+id/btnTakePic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="71dp"
+        android:layout_marginEnd="73dp"
+        android:layout_marginBottom="28dp"
         android:text="take pic"
-        tools:layout_editor_absoluteX="240dp"
-        tools:layout_editor_absoluteY="500dp" />
+        app:layout_constraintBottom_toTopOf="@+id/btnAddNewPost"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imgNewPost" />
 
     <Button
         android:id="@+id/btnAddNewPost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="21dp"
         android:text="add post"
-        tools:layout_editor_absoluteX="160dp"
-        tools:layout_editor_absoluteY="576dp" />
+        app:layout_constraintBottom_toTopOf="@+id/btnback6"
+        app:layout_constraintStart_toStartOf="@+id/btnback6" />
 
     <EditText
         android:id="@+id/etNewPostTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="86dp"
+        android:layout_marginTop="32dp"
         android:ems="10"
         android:inputType="text"
         android:text="Name"
-        tools:layout_editor_absoluteX="86dp"
-        tools:layout_editor_absoluteY="82dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvNewPostTitle" />
 
     <EditText
         android:id="@+id/etNewPostInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="23dp"
+        android:layout_marginEnd="3dp"
         android:ems="10"
         android:inputType="text"
         android:text="Name"
-        tools:layout_editor_absoluteX="83dp"
-        tools:layout_editor_absoluteY="151dp" />
+        app:layout_constraintEnd_toEndOf="@+id/etNewPostTitle"
+        app:layout_constraintTop_toBottomOf="@+id/etNewPostTitle" />
 
     <Button
         android:id="@+id/btnback6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="38dp"
         android:text="חזור"
-        tools:layout_editor_absoluteX="160dp"
-        tools:layout_editor_absoluteY="645dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

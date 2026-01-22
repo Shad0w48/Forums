@@ -7,41 +7,53 @@
     android:layout_height="match_parent"
     tools:context=".UserMain">
 
-    <ImageView
-        android:id="@+id/imglogoUmain"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:srcCompat="@mipmap/icon" />
 
-    <Button
-        android:id="@+id/btnAdminPage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Admin Page"
-        android:visibility="invisible" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="600dp"
-        android:orientation="horizontal"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="126dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="20dp"
+        tools:layout_editor_absoluteY="23dp"
+        tools:ignore="MissingConstraints">
 
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvForum"
-            android:layout_width="114dp"
-            android:layout_height="540dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imglogoUmain" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvPost"
+        <ImageView
+            android:id="@+id/imglogoUmain"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content"
+            app:srcCompat="@mipmap/icon"
+            tools:ignore="MissingConstraints" />
 
+        <Button
+            android:id="@+id/btnToAdminPage2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Admin Page"
+            android:visibility="invisible"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="34dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            android:orientation="horizontal"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="126dp">
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvForum"
+                android:layout_width="114dp"
+                android:layout_height="540dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imglogoUmain" />
+
+
+        </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -23,6 +23,7 @@ public class LogInPage extends AppCompatActivity implements View.OnClickListener
 
     public static final String MyPreferences="MyPrefs";
     SharedPreferences sharedPreferences;
+
     private EditText etEmail, etPassword;
     private Button btnLogin;
     private TextView tvRegister;
@@ -91,7 +92,7 @@ public class LogInPage extends AppCompatActivity implements View.OnClickListener
 
 
     private void loginUser(String email, String password) {
-        databaseService.LoginUser(email, password, new DatabaseService.DatabaseCallback<String>() {
+        databaseService.loginUser(email, password, new DatabaseService.DatabaseCallback<String>() {
             /// Callback method called when the operation is completed
             // @param email  & password is logged in
             @Override
@@ -100,7 +101,12 @@ public class LogInPage extends AppCompatActivity implements View.OnClickListener
                 /// save the user data to shared preferences
                 // SharedPreferencesUtil.saveUser(LoginActivity.this, user);
                 /// Redirect to main activity and clear back stack to prevent user from going back to login screen
+                SharedPreferences.Editor editor = sharedPreferences.edit();
 
+                editor.putString("email", email);
+                editor.putString("password", password);
+
+                editor.commit();
 
 
                 Intent mainIntent = new Intent(LogInPage.this, UserMain.class);

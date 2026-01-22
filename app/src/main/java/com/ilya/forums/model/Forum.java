@@ -13,9 +13,9 @@ public class Forum {
     private String description;
     private User creator;
     List<Post> postList;
-    private Timestamp createdAt;
+    private String createdAt;
 
-    public Forum(String forumId, String name, String description, User creator, List<Post> postList, Timestamp createdAt) {
+    public Forum(String forumId, String name, String description, User creator, List<Post> postList, String createdAt) {
         this.forumId = forumId;
         this.name = name;
         this.description = description;
@@ -24,6 +24,11 @@ public class Forum {
         this.createdAt = createdAt;
     }
 
+    public Forum(Forum forum) {
+        this.forumId = forum.getForumId();
+        this.name = forum.getName();
+
+    }
 
     public Forum() {
     }
@@ -68,11 +73,11 @@ public class Forum {
         this.postList = postList;
     }
 
-    public Timestamp getCreatedAt() {
+    public String getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
+    public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
 }

@@ -1,15 +1,21 @@
 package com.ilya.forums.services;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.ilya.forums.model.Comment;
 import com.ilya.forums.model.Forum;
-import com.ilya.forums.model.Post;
 import com.ilya.forums.model.User;
+import com.ilya.forums.model.Post;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -38,10 +44,8 @@ public class DatabaseService {
     /// paths for different data types in the database
     /// @see DatabaseService#readData(String)
     private static final String USERS_PATH = "users",
-                                PostS_PATH = "Posts",
-
-                                ForumS_PATH = "Forums",
-                                CommentS_PATH = "Comments";
+                                POSTS_PATH = "forums_posts",
+                                FORUMS_PATH = "forums";
 
     /// callback interface for database operations
     /// @param <T> the type of the object to return
@@ -224,19 +228,43 @@ public class DatabaseService {
     /// @return a new id for the user
     /// @see #generateNewId(String)
     /// @see User
-    public String generateUserId() {
-        return generateNewId(USERS_PATH);
-    }
+   // public String generateUserId() {
+    //    return generateNewId(USERS_PATH);
+   // }
 
     /// create a new user in the database
-    /// @param user the user object to create
+    /// @param user the user object to create (without the id, null)
     /// @param callback the callback to call when the operation is completed
-    ///              the callback will receive void
+    ///              the callback will receive new user id
     ///            if the operation fails, the callback will receive an exception
     /// @see DatabaseCallback
     /// @see User
-    public void createNewUser(@NotNull final User user, @Nullable final DatabaseCallback<Void> callback) {
-        writeData(USERS_PATH + "/" + user.getId(), user, callback);
+    public void createNewUser(@NotNull final User user,
+                              @Nullable final DatabaseCallback<String> callback) {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        mAuth.createUserWithEmailAndPassword(user.getEmail(), user.getPassword())
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Log.d("TAG", "createUserWithEmail:success");
+                    String uid = mAuth.getUid();
+                    user.setId(uid);
+                    writeData(USERS_PATH + "/" + uid, user, new DatabaseCallback<Void>() {
+                        @Override
+                        public void onCompleted(Void v) {
+                            if (callback != null) callback.onCompleted(uid);
+                        }
+
+                        @Override
+                        public void onFailed(Exception e) {
+                            if (callback != null) callback.onFailed(e);
+                        }
+                    });
+                } else {
+                    Log.w("TAG", "createUserWithEmail:failure", task.getException());
+                    if (callback != null)
+                        callback.onFailed(task.getException());
+                }
+            });
     }
 
     /// Login with email and password
@@ -246,30 +274,26 @@ public class DatabaseService {
     ///            if the operation fails, the callback will receive an exception
     /// @see DatabaseCallback
     /// @see FirebaseAuth
-
-    public void LoginUser(@NotNull final String email,final String password,
+    public void loginUser(@NotNull final String email,final String password,
                           @Nullable final DatabaseCallback<String> callback) {
-
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
-
         mAuth.signInWithEmailAndPassword(email,password)
-
-                .addOnCompleteListener(task -> {
-
-                    if (task.isSuccessful()) {
-                        Log.d("TAG", "createUserWithEmail:success");
-
-                        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Log.d("TAG", "loginUserWithEmail:success");
+                    String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    if (callback != null)
                         callback.onCompleted(uid);
-
-                    } else {
-                        Log.w("TAG", "createUserWithEmail:failure", task.getException());
-
-                        if (callback != null)
-                            callback.onFailed(task.getException());
-                    }
-                });
+                } else {
+                    Log.w("TAG", "loginUserWithEmail:failure", task.getException());
+                    if (callback != null)
+                        callback.onFailed(task.getException());
+                }
+            });
     }
+
+
+
 
     /// get a user from the database
     /// @param uid the id of the user to get
@@ -300,6 +324,42 @@ public class DatabaseService {
         deleteData(USERS_PATH + "/" + uid, callback);
     }
 
+    /// get a user by email and password
+    /// @param email the email of the user
+    /// @param password the password of the user
+    /// @param callback the callback to call when the operation is completed
+    ///            the callback will receive the user object
+    ///          if the operation fails, the callback will receive an exception
+    /// @see DatabaseCallback
+    /// @see User
+    public void getUserByEmailAndPassword(@NotNull final String email, @NotNull final String password, @NotNull final DatabaseCallback<User> callback) {
+        readData(USERS_PATH).orderByChild("email").equalTo(email).get()
+            .addOnCompleteListener(task -> {
+                if (!task.isSuccessful()) {
+                    Log.e(TAG, "Error getting data", task.getException());
+                    callback.onFailed(task.getException());
+                    return;
+                }
+                if (task.getResult().getChildrenCount() == 0) {
+                    callback.onFailed(new Exception("User not found"));
+                    return;
+                }
+                for (DataSnapshot dataSnapshot : task.getResult().getChildren()) {
+                    User user = dataSnapshot.getValue(User.class);
+                    if (user == null || !Objects.equals(user.getPassword(), password)) {
+                        callback.onFailed(new Exception("Invalid email or password"));
+                        return;
+                    }
+
+                    callback.onCompleted(user);
+                    return;
+
+                }
+            });
+    }
+
+
+
     /// check if an email already exists in the database
     /// @param email the email to check
     /// @param callback the callback to call when the operation is completed
@@ -315,7 +375,6 @@ public class DatabaseService {
                     callback.onCompleted(exists);
                 });
     }
-
 
     public void updateUser(@NotNull final User user, @Nullable final DatabaseCallback<Void> callback) {
         runTransaction(USERS_PATH + "/" + user.getId(), User.class, currentUser -> user, new DatabaseCallback<User>() {
@@ -338,99 +397,99 @@ public class DatabaseService {
 
     // endregion User Section
 
-    // region Post section
+    // region post section
 
-    /// create a new Post in the database
-    /// @param Post the Post object to create
+    /// create a new post in the database
+    /// @param post the post object to create
     /// @param callback the callback to call when the operation is completed
     ///              the callback will receive void
     ///             if the operation fails, the callback will receive an exception
     /// @see DatabaseCallback
     /// @see Post
-    public void createNewPost(@NotNull final Post Post, @Nullable final DatabaseCallback<Void> callback) {
-        writeData(PostS_PATH + "/" + Post.getUser().getId(), Post, callback);
+    public void createNewPost(@NotNull final Post post, @Nullable final DatabaseCallback<Void> callback) {
+        writeData( POSTS_PATH + "/" + post.getForumId()+"/"+post.getPostId(), post, callback);
     }
 
-    /// get a Post from the database
-    /// @param PostId the id of the Post to get
+    /// get a post from the database
+    /// @param postId the id of the post to get
     /// @param callback the callback to call when the operation is completed
-    ///               the callback will receive the Post object
+    ///               the callback will receive the post object
     ///              if the operation fails, the callback will receive an exception
     /// @see DatabaseCallback
     /// @see Post
-    public void getPost(@NotNull final String PostId, @NotNull final DatabaseCallback<Post> callback) {
-        getData(PostS_PATH + "/" + PostId, Post.class, callback);
+    public void getPost(@NotNull final String postId, @NotNull final DatabaseCallback<Post> callback) {
+        getData(POSTS_PATH + "/" + postId, Post.class, callback);
     }
 
-    /// get all the Posts from the database
+    /// get all the posts from the database
     /// @param callback the callback to call when the operation is completed
-    ///              the callback will receive a list of Post objects
+    ///              the callback will receive a list of post objects
     ///            if the operation fails, the callback will receive an exception
     /// @see DatabaseCallback
     /// @see List
     /// @see Post
     public void getPostList(@NotNull final DatabaseCallback<List<Post>> callback) {
-        getDataList(PostS_PATH, Post.class, callback);
+        getDataList(POSTS_PATH, Post.class, callback);
     }
 
-    /// generate a new id for a new Post in the database
-    /// @return a new id for the Post
+    /// generate a new id for a new post in the database
+    /// @return a new id for the post
     /// @see #generateNewId(String)
     /// @see Post
     public String generatePostId() {
-        return generateNewId(PostS_PATH);
+        return generateNewId(POSTS_PATH);
     }
 
-    /// delete a Post from the database
-    /// @param PostId the id of the Post to delete
+    /// delete a post from the database
+    /// @param postId the id of the post to delete
     /// @param callback the callback to call when the operation is completed
-    public void deletePost(@NotNull final String PostId, @Nullable final DatabaseCallback<Void> callback) {
-        deleteData(PostS_PATH + "/" + PostId, callback);
+    public void deletePost(@NotNull final String postId, @Nullable final DatabaseCallback<Void> callback) {
+        deleteData(POSTS_PATH + "/" + postId, callback);
     }
 
-    // endregion Post section
+    // endregion post section
 
-    // region Comment section
+    // region forum section
 
-    /// create a new Comment in the database
-    /// @param Comment the Comment object to create
+    /// create a new forum in the database
+    /// @param forum the forum object to create
     /// @param callback the callback to call when the operation is completed
     ///               the callback will receive void
     ///              if the operation fails, the callback will receive an exception
     /// @see DatabaseCallback
-    /// @see Comment
-    public void createNewComment(@NotNull final Comment Comment, @Nullable final DatabaseCallback<Void> callback) {
-        writeData(CommentS_PATH + "/" + Comment.getAuthorId(), Comment, callback);
+    /// @see Forum
+    public void createNewForum(@NotNull final Forum forum, @Nullable final DatabaseCallback<Void> callback) {
+        writeData(FORUMS_PATH + "/" + forum.getForumId(), forum, callback);
     }
 
-    /// get a Comment from the database
-    /// @param CommentId the id of the Comment to get
+    /// get a forum from the database
+    /// @param forumId the id of the forum to get
     /// @param callback the callback to call when the operation is completed
-    ///                the callback will receive the Comment object
+    ///                the callback will receive the forum object
     ///               if the operation fails, the callback will receive an exception
     /// @see DatabaseCallback
-    /// @see Comment
-    public void getComment(@NotNull final String CommentId, @NotNull final DatabaseCallback<Comment> callback) {
-        getData(CommentS_PATH + "/" + CommentId, Comment.class, callback);
+    /// @see Forum
+    public void getForum(@NotNull final String forumId, @NotNull final DatabaseCallback<Forum> callback) {
+        getData(FORUMS_PATH + "/" + forumId, Forum.class, callback);
     }
 
-    /// get all the Comments from the database
+    /// get all the forums from the database
     /// @param callback the callback to call when the operation is completed
-    ///               the callback will receive a list of Comment objects
+    ///               the callback will receive a list of forum objects
     ///
-    public void getCommentList(@NotNull final DatabaseCallback<List<Comment>> callback) {
-        getDataList(CommentS_PATH, Comment.class, callback);
+    public void getForumList(@NotNull final DatabaseCallback<List<Forum>> callback) {
+        getDataList(FORUMS_PATH, Forum.class, callback);
     }
 
-    /// get all the Comments of a specific user from the database
-    /// @param uid the id of the user to get the Comments for
+    /// get all the forums of a specific user from the database
+    /// @param uid the id of the user to get the forums for
     /// @param callback the callback to call when the operation is completed
-    public void getUserCommentList(@NotNull String uid, @NotNull final DatabaseCallback<List<Comment>> callback) {
-        getCommentList(new DatabaseCallback<>() {
+    public void getUserForumList(@NotNull String uid, @NotNull final DatabaseCallback<List<Forum>> callback) {
+        getForumList(new DatabaseCallback<>() {
             @Override
-            public void onCompleted(List<Comment> Comments) {
-                Comments.removeIf(Comment -> !Objects.equals(Comment.getAuthorId(), uid));
-                callback.onCompleted(Comments);
+            public void onCompleted(List<Forum> forums) {
+                forums.removeIf(forum -> !Objects.equals(forum.getForumId(), uid));
+                callback.onCompleted(forums);
             }
 
             @Override
@@ -441,65 +500,21 @@ public class DatabaseService {
     }
 
 
-    /// generate a new id for a new Comment in the database
-    /// @return a new id for the Comment
+    /// generate a new id for a new forum in the database
+    /// @return a new id for the forum
     /// @see #generateNewId(String)
-    /// @see Comment
-    public String generateCommentId() {
-        return generateNewId(CommentS_PATH);
-    }
-
-    /// delete a Comment from the database
-    /// @param CommentId the id of the Comment to delete
-    /// @param callback the callback to call when the operation is completed
-    public void deleteComment(@NotNull final String CommentId, @Nullable final DatabaseCallback<Void> callback) {
-        deleteData(CommentS_PATH + "/" + CommentId, callback);
-    }
-
-    // endregion Comment section
-
-
-
-    /// generate a new id for a new Comment in the database
-    /// @return a new id for the Comment
-    /// @see #generateNewId(String)
-    /// @see Comment
+    /// @see Forum
     public String generateForumId() {
-        return generateNewId(ForumS_PATH);
+        return generateNewId(FORUMS_PATH);
     }
 
-
-    /// create a new Forum in the database
-    /// @param forum the Forum object to create
+    /// delete a forum from the database
+    /// @param forumId the id of the forum to delete
     /// @param callback the callback to call when the operation is completed
-    ///               the callback will receive void
-    ///              if the operation fails, the callback will receive an exception
-    /// @see DatabaseCallback
-    /// @see Forum
-    public void createNewForum(@NotNull final Forum forum, @Nullable final DatabaseCallback<Void> callback) {
-        writeData(ForumS_PATH + "/" + forum.getForumId(), forum, callback);
+    public void deleteForum(@NotNull final String forumId, @Nullable final DatabaseCallback<Void> callback) {
+        deleteData(FORUMS_PATH + "/" + forumId, callback);
     }
 
-
-    /// get a forum from the database
-    /// @param forumid the id of the Forum to get
-    /// @param callback the callback to call when the operation is completed
-    ///                the callback will receive the Comment object
-    ///               if the operation fails, the callback will receive an exception
-    /// @see DatabaseCallback
-    /// @see Forum
-    public void getForum(@NotNull final String forumid, @NotNull final DatabaseCallback<Forum> callback) {
-        getData(ForumS_PATH + "/" + forumid, Forum.class, callback);
-    }
-
-    /// get all the Comments from the database
-    /// @param callback the callback to call when the operation is completed
-    ///               the callback will receive a list of Comment objects
-    ///
-    public void getForumList(@NotNull final DatabaseCallback<List<Forum>> callback) {
-        getDataList(ForumS_PATH, Forum.class, callback);
-    }
-
-
+    // endregion forum section
 
 }

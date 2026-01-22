@@ -92,7 +92,7 @@ public class CreateNewForum extends AppCompatActivity implements View.OnClickLis
         Log.d(TAG, "onClick: Registering user...");
         String forumId=databaseService.generateForumId()    ;
 
-        Forum newForum=new Forum(forumId,title,description,currentUser,new ArrayList<>(),timestamp);
+        Forum newForum=new Forum(forumId,title,description,currentUser,new ArrayList<>(),timestamp.toString());
 
         databaseService.createNewForum(newForum, new DatabaseService.DatabaseCallback<Void>() {
             @Override

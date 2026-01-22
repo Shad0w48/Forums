@@ -31,6 +31,11 @@ public class ForumAdapter extends RecyclerView.Adapter<ForumAdapter.ViewHolder> 
         this.onForumClickListener = onForumClickListener;
     }
 
+    public ForumAdapter(List<Forum> forumList, OnForumClickListener onForumClickListener) {
+        this.forumList = forumList;
+        this.onForumClickListener = onForumClickListener;
+    }
+
     @NonNull
     @Override
     public ForumAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

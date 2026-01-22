@@ -52,7 +52,7 @@ public class CreateNewPost extends AppCompatActivity implements View.OnClickList
     String userId, title, description;
     private EditText etPostTitle, etPostInfo;
     private Button btnGallery, btnTakePic, btnAddPost;
-    private ImageView imageView;
+    private ImageView ivIPic;
 
     private Button btnBack;
     Timestamp timestamp;
@@ -65,6 +65,7 @@ public class CreateNewPost extends AppCompatActivity implements View.OnClickList
     // constant to compare
     // the activity result code
     int SELECT_PICTURE = 200;
+    private String forumId="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +80,8 @@ public class CreateNewPost extends AppCompatActivity implements View.OnClickList
         });databaseService=DatabaseService.getInstance();
         mAuth = FirebaseAuth.getInstance();
         userId=mAuth.getUid();
+
+        forumId = getIntent().getStringExtra("forumId");
 
         databaseService.getUser(userId,  new DatabaseService.DatabaseCallback<User>() {
             @Override
@@ -100,6 +103,40 @@ public class CreateNewPost extends AppCompatActivity implements View.OnClickList
         etPostInfo=findViewById(R.id.etNewPostInfo);
 
         btnAddPost.setOnClickListener(this);
+        btnGallery = findViewById(R.id.btnGallery);
+        btnTakePic = findViewById(R.id.btnTakePic);
+
+        ivIPic = findViewById(R.id.imgNewPost);
+
+
+        /// register the activity result launcher for capturing image from camera
+        captureImageLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        Bitmap bitmap = (Bitmap) result.getData().getExtras().get("data");
+                        ivIPic.setImageBitmap(bitmap);
+                    }
+                });
+
+
+        btnGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectImageFromGallery();
+
+
+            }
+        });
+
+        btnTakePic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                captureImageFromCamera();
+
+            }
+        });
+
 
     }
 
@@ -108,14 +145,14 @@ public class CreateNewPost extends AppCompatActivity implements View.OnClickList
 
         timestamp = Timestamp.now();
 
-
+        String imagePic = ImageUtil.convertTo64Base(ivIPic);
         title = etPostTitle.getText().toString();
         description = etPostInfo.getText().toString();
         /// Validate input
         Log.d(TAG, "onClick: Registering user...");
         String postId=databaseService.generatePostId()    ;
 //    public Post(String postId, String title, String content, User user, String timestamp, String ForumId, String postPic) {
-        Post newPost=new Post(postId,title,description,currentUser,timestamp.toString(),"5454","iuiu");
+        Post newPost=new Post(postId,title,description,currentUser,timestamp.toString(),forumId,"iuiu");
 
         databaseService.createNewPost(newPost, new DatabaseService.DatabaseCallback<Void>() {
             @Override
@@ -131,6 +168,64 @@ public class CreateNewPost extends AppCompatActivity implements View.OnClickList
 
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+/// select image from gallery
+private void selectImageFromGallery() {
+
+    imageChooser();
+}
+
+/// capture image from camera
+private void captureImageFromCamera() {
+    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+    captureImageLauncher.launch(takePictureIntent);
+}
+
+
+void imageChooser() {
+
+    // create an instance of the
+    // intent of the type image
+    Intent i = new Intent();
+    i.setType("image/*");
+    i.setAction(Intent.ACTION_GET_CONTENT);
+
+    // pass the constant to compare it
+    // with the returned requestCode
+    startActivityForResult(Intent.createChooser(i, "Select Picture"), SELECT_PICTURE);
+}
+
+// this function is triggered when user
+// selects the image from the imageChooser
+public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+
+    if (resultCode == RESULT_OK) {
+
+        // compare the resultCode with the
+        // SELECT_PICTURE constant
+        if (requestCode == SELECT_PICTURE) {
+            // Get the url of the image from data
+            Uri selectedImageUri = data.getData();
+            if (null != selectedImageUri) {
+                // update the preview image in the layout
+                ivIPic.setImageURI(selectedImageUri);
+            }
+        }
+    }
+}
+
 
 }
 

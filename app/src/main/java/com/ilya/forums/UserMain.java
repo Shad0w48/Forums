@@ -30,7 +30,7 @@ public class UserMain extends AppCompatActivity implements View.OnClickListener 
     private DatabaseService databaseService;
     private FirebaseAuth mAuth;
     String userId;
-    Button btnAdminPage;
+    Button btnToAdminPage;
 
     RecyclerView rvForum;
 
@@ -53,15 +53,16 @@ public class UserMain extends AppCompatActivity implements View.OnClickListener 
 
         databaseService = DatabaseService.getInstance();
         mAuth = FirebaseAuth.getInstance();
-        btnAdminPage = findViewById(R.id.btnAdminPage);
-        btnAdminPage.setOnClickListener(this);
+        btnToAdminPage=findViewById(R.id.btnToAdminPage2);
+        btnToAdminPage.setOnClickListener(this);
         userId = mAuth.getCurrentUser().getUid();
 
         databaseService.getUser(userId,  new DatabaseService.DatabaseCallback<User>() {
             @Override
             public void onCompleted(User user) {
+
                 if (user.getAdmin())
-                    btnAdminPage.setVisibility(View.VISIBLE);
+                    btnToAdminPage.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -72,9 +73,14 @@ public class UserMain extends AppCompatActivity implements View.OnClickListener 
 
 
         rvForum.setLayoutManager(new LinearLayoutManager(this));
-        forumAdapter = new ForumAdapter(new ForumAdapter.OnForumClickListener() {
+        forumAdapter = new ForumAdapter(forumArrayList, new ForumAdapter.OnForumClickListener() {
             @Override
             public void onForumClick(Forum forum) {
+
+                Log.d("TAG", "Forum clicked: " + forum);
+                Intent intent = new Intent(UserMain.this, CreateNewPost.class);
+                intent.putExtra("forumId", forum.getForumId());
+                startActivity(intent);
 
             }
 
@@ -93,9 +99,18 @@ public class UserMain extends AppCompatActivity implements View.OnClickListener 
         databaseService.getForumList(new DatabaseService.DatabaseCallback<List<Forum>>() {
             @Override
             public void onCompleted(List<Forum> forums) {
-                forumArrayList.addAll(forums);
+
+              for(int i=0; i<forums.size();i++){
+
+                  forumArrayList.add( new Forum(forums.get(i)));
+
+              }
+
+
+
 
                 forumAdapter.notifyDataSetChanged();
+                Log.d("jkh",forums.toString());
 
 
             }
@@ -105,16 +120,25 @@ public class UserMain extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void onFailed(Exception e) {
 
+
+                Log.d("error",e.toString());
             }
         });
 
     }
 
+
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+        super.onPointerCaptureChanged(hasCapture);
+    }
+
     @Override
     public void onClick(View v) {
-        if (v.getId() == btnAdminPage.getId()){
-            Intent i = new Intent(this, AdminActivity.class);
-            startActivity(i);
+        if(v==btnToAdminPage){
+            Intent go = new Intent(this, AdminActivity.class);
+            startActivity(go);
         }
     }
 }
