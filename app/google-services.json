@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "691364592727",
+    "firebase_url": "https://forums-da48c-default-rtdb.firebaseio.com",
+    "project_id": "forums-da48c",
+    "storage_bucket": "forums-da48c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:691364592727:android:02a2019ab38f9c001f3712",
+        "android_client_info": {
+          "package_name": "com.ilya.forums"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_ggLWBTVHi5w4CrxlvBA59ykl0yPiQok"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
