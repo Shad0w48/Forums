@@ -88,7 +88,16 @@ public class UserMain extends AppCompatActivity implements View.OnClickListener 
             public void onPostClick(Post post) {
                 Log.d("TAG", "Post clicked: " + post.toString());
 
+                Intent goToPostViewing = new Intent(UserMain.this, PostViewAfterClick.class);
+                goToPostViewing.putExtra("PostTitle",post.getTitle());
+                goToPostViewing.putExtra("PostContent",post.getContent());
+                goToPostViewing.putExtra("PostUser",userId);
+                goToPostViewing.putExtra("PostTime",post.getTimestamp());
+                goToPostViewing.putExtra("PostForumId",forumId);
+                goToPostViewing.putExtra("PostUpVote",post.getUpVote());
+                goToPostViewing.putExtra("PostDownVote",post.getDownVote());
 
+                startActivity(goToPostViewing);
 
             }
 

@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Forums">
         <activity
+            android:name=".PostViewAfterClick"
+            android:exported="false" />
+        <activity
             android:name=".CreateNewForum"
             android:exported="false" />
         <activity
@@ -35,7 +38,6 @@
         <activity
             android:name=".Splash"
             android:exported="false" />
-
         <activity
             android:name=".Creds"
             android:exported="false" />
