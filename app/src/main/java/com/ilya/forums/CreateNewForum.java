@@ -41,6 +41,9 @@ public class CreateNewForum extends AppCompatActivity implements View.OnClickLis
     User currentUser;
 
 
+    ArrayList<Post> postListStart = new ArrayList<>();
+    private String postId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,9 +79,12 @@ public class CreateNewForum extends AppCompatActivity implements View.OnClickLis
         etTitle=findViewById(R.id.etForumTitle);
         etContent=findViewById(R.id.etForumDescription);
 
-        btnCreateForum.setOnClickListener(this);
+       btnCreateForum.setOnClickListener(this);
 
-    }
+
+
+
+        }
 
     @Override
     public void onClick(View v) {
@@ -97,6 +103,8 @@ public class CreateNewForum extends AppCompatActivity implements View.OnClickLis
         databaseService.createNewForum(newForum, new DatabaseService.DatabaseCallback<Void>() {
             @Override
             public void onCompleted(Void object) {
+
+
 
             }
 

@@ -428,8 +428,8 @@ public class DatabaseService {
     /// @see DatabaseCallback
     /// @see List
     /// @see Post
-    public void getPostList(@NotNull final DatabaseCallback<List<Post>> callback) {
-        getDataList(POSTS_PATH, Post.class, callback);
+    public void getPostList(String forumId,   @NotNull final DatabaseCallback<List<Post>> callback) {
+        getDataList(POSTS_PATH+"/"+ forumId +"/", Post.class, callback);
     }
 
     /// generate a new id for a new post in the database

@@ -1,5 +1,7 @@
 package com.ilya.forums;
 
+import static android.widget.Toast.LENGTH_LONG;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +9,7 @@ import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,8 +21,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.ilya.forums.adapters.ForumAdapter;
+import com.ilya.forums.adapters.PostAdapter;
 import com.ilya.forums.adapters.UserAdapter;
 import com.ilya.forums.model.Forum;
+import com.ilya.forums.model.Post;
 import com.ilya.forums.model.User;
 import com.ilya.forums.services.DatabaseService;
 
@@ -32,10 +37,13 @@ public class UserMain extends AppCompatActivity implements View.OnClickListener 
     String userId;
     Button btnToAdminPage;
 
-    RecyclerView rvForum;
+    RecyclerView rvForum, rvLastPost;
 
     ArrayList<Forum> forumArrayList=new ArrayList<>();
-    private ForumAdapter forumAdapter;;
+    ArrayList<Post> postArrayList=new ArrayList<>();
+    PostAdapter postAdapter;
+    private ForumAdapter forumAdapter;
+    String forumId;
 
 
     @SuppressLint("MissingInflatedId")
@@ -57,6 +65,8 @@ public class UserMain extends AppCompatActivity implements View.OnClickListener 
         btnToAdminPage.setOnClickListener(this);
         userId = mAuth.getCurrentUser().getUid();
 
+        rvLastPost=findViewById(R.id.rvLastPost);
+        rvLastPost.setLayoutManager(new LinearLayoutManager(this));
         databaseService.getUser(userId,  new DatabaseService.DatabaseCallback<User>() {
             @Override
             public void onCompleted(User user) {
@@ -72,15 +82,42 @@ public class UserMain extends AppCompatActivity implements View.OnClickListener 
         });
 
 
+
+        postAdapter = new PostAdapter(postArrayList, new PostAdapter.OnPostClickListener() {
+            @Override
+            public void onPostClick(Post post) {
+                Log.d("TAG", "Post clicked: " + post.toString());
+
+
+
+            }
+
+            @Override
+            public void onLongPostClick(Post post) {
+
+            }
+        } );
+
+
+
+
+
+        rvForum.setAdapter(forumAdapter);
+
+
         rvForum.setLayoutManager(new LinearLayoutManager(this));
         forumAdapter = new ForumAdapter(forumArrayList, new ForumAdapter.OnForumClickListener() {
             @Override
             public void onForumClick(Forum forum) {
+                forumId=forum.getForumId();
 
-                Log.d("TAG", "Forum clicked: " + forum);
-                Intent intent = new Intent(UserMain.this, CreateNewPost.class);
-                intent.putExtra("forumId", forum.getForumId());
-                startActivity(intent);
+
+               readPosts(forumId);
+
+
+
+                Log.d("TAG", "Forum clicked: " + forumId);
+
 
             }
 
@@ -125,8 +162,36 @@ public class UserMain extends AppCompatActivity implements View.OnClickListener 
             }
         });
 
+
+
+
+
     }
 
+    private void readPosts(String forumId) {
+        databaseService.getPostList(forumId, new DatabaseService.DatabaseCallback<List<Post>>() {
+            @Override
+            public void onCompleted(List<Post> postList) {
+                postArrayList.clear();
+
+                postArrayList.addAll(postList);
+
+                rvLastPost.setAdapter(postAdapter);
+
+                postAdapter.notifyDataSetChanged();
+                Log.d("TAG", "Post clicked: " + postArrayList.get(0).toString());
+
+
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+                Log.d("Post", "Post error: " + e);
+
+            }
+        });
+
+    }
 
 
     @Override

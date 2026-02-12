@@ -151,17 +151,20 @@ public class CreateNewPost extends AppCompatActivity implements View.OnClickList
         /// Validate input
         Log.d(TAG, "onClick: Registering user...");
         String postId=databaseService.generatePostId()    ;
-//    public Post(String postId, String title, String content, User user, String timestamp, String ForumId, String postPic) {
-        Post newPost=new Post(postId,title,description,currentUser,timestamp.toString(),forumId,"iuiu");
+        Post newPost=new Post(postId,title,description,currentUser,timestamp.toString(),forumId,imagePic);
 
         databaseService.createNewPost(newPost, new DatabaseService.DatabaseCallback<Void>() {
             @Override
             public void onCompleted(Void object) {
+                Log.d(TAG, "Post Added");
+                Intent go=new Intent(CreateNewPost.this,UserMain.class);
+                startActivity(go);
 
             }
 
             @Override
             public void onFailed(Exception e) {
+                Log.d(TAG, "Error"+e.toString());
 
             }
         });

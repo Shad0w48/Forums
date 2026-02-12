@@ -19,11 +19,22 @@ import java.util.List;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
 
-    private List<Post> posts = new ArrayList<>();
 
-    public void setPosts(List<Post> posts) {
-        this.posts = posts;
-        notifyDataSetChanged();
+    private final List<Post> postList;
+    private final PostAdapter.OnPostClickListener onPostClickListener;
+
+
+
+
+    public interface OnPostClickListener {
+        void onPostClick(Post post);
+
+
+        void onLongPostClick(Post post);
+    }
+    public PostAdapter(List<Post> postList, OnPostClickListener onPostClickListener) {
+        this.postList = postList;
+        this.onPostClickListener = onPostClickListener;
     }
 
     @NonNull
@@ -36,16 +47,31 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
-        Post post = posts.get(position);
-     //   holder.subreddit.setText("r/" + post.subreddit);
-      //  holder.title.setText(post.getTitle());
-     //   holder.upvotes.setText("▲ " + post.upvotes);
-     //   holder.comments.setText("💬 " + post.comments);
+        Post post = postList.get(position);
+        holder.content.setText( post.getContent());
+        holder.title.setText(post.getTitle());
+        holder.upvotes.setText( post.getUpVote()+"");
+       //holder.comments.setText("💬 " + post.comments);
+
+
+        holder.itemView.setOnClickListener(v -> {
+            if (onPostClickListener != null) {
+                onPostClickListener.onPostClick(post);
+            }
+        });
+
+        holder.itemView.setOnLongClickListener(v -> {
+            if (onPostClickListener != null) {
+                onPostClickListener.onLongPostClick(post);
+            }
+            return true;
+        });
+
     }
 
     @Override
     public int getItemCount() {
-        return posts.size();
+        return postList.size();
     }
 
     static class PostViewHolder extends RecyclerView.ViewHolder {
@@ -56,6 +82,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             title = itemView.findViewById(R.id.tvPostTitle);
             content = itemView.findViewById(R.id.tvPostContent);
             upvotes = itemView.findViewById(R.id.tvVotes);
+
+
+
         }
     }
 }
