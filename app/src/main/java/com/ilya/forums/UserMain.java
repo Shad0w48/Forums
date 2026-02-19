@@ -35,7 +35,7 @@ public class UserMain extends AppCompatActivity implements View.OnClickListener 
     private DatabaseService databaseService;
     private FirebaseAuth mAuth;
     String userId;
-    Button btnToAdminPage;
+    Button btnToAdminPage,btnGoToAddPost;
 
     RecyclerView rvForum, rvLastPost;
 
@@ -43,7 +43,8 @@ public class UserMain extends AppCompatActivity implements View.OnClickListener 
     ArrayList<Post> postArrayList=new ArrayList<>();
     PostAdapter postAdapter;
     private ForumAdapter forumAdapter;
-    String forumId;
+    String forumId, forumName="";
+
 
 
     @SuppressLint("MissingInflatedId")
@@ -59,6 +60,8 @@ public class UserMain extends AppCompatActivity implements View.OnClickListener 
         });
          rvForum = findViewById(R.id.rvForum);
 
+         btnGoToAddPost=findViewById(R.id.btnCreatePost);
+         btnGoToAddPost.setOnClickListener(this);
         databaseService = DatabaseService.getInstance();
         mAuth = FirebaseAuth.getInstance();
         btnToAdminPage=findViewById(R.id.btnToAdminPage2);
@@ -89,13 +92,9 @@ public class UserMain extends AppCompatActivity implements View.OnClickListener 
                 Log.d("TAG", "Post clicked: " + post.toString());
 
                 Intent goToPostViewing = new Intent(UserMain.this, PostViewAfterClick.class);
-                goToPostViewing.putExtra("PostTitle",post.getTitle());
-                goToPostViewing.putExtra("PostContent",post.getContent());
-                goToPostViewing.putExtra("PostUser",userId);
-                goToPostViewing.putExtra("PostTime",post.getTimestamp());
-                goToPostViewing.putExtra("PostForumId",forumId);
-                goToPostViewing.putExtra("PostUpVote",post.getUpVote());
-                goToPostViewing.putExtra("PostDownVote",post.getDownVote());
+
+                goToPostViewing.putExtra("post",post);
+                goToPostViewing.putExtra("forumName",forumName);
 
                 startActivity(goToPostViewing);
 
@@ -109,9 +108,9 @@ public class UserMain extends AppCompatActivity implements View.OnClickListener 
 
 
 
+        rvLastPost.setAdapter(postAdapter);
 
 
-        rvForum.setAdapter(forumAdapter);
 
 
         rvForum.setLayoutManager(new LinearLayoutManager(this));
@@ -122,6 +121,7 @@ public class UserMain extends AppCompatActivity implements View.OnClickListener 
 
 
                readPosts(forumId);
+               forumName=forum.getName();
 
 
 
@@ -183,12 +183,15 @@ public class UserMain extends AppCompatActivity implements View.OnClickListener 
             public void onCompleted(List<Post> postList) {
                 postArrayList.clear();
 
+
                 postArrayList.addAll(postList);
 
-                rvLastPost.setAdapter(postAdapter);
+
 
                 postAdapter.notifyDataSetChanged();
-                Log.d("TAG", "Post clicked: " + postArrayList.get(0).toString());
+
+                rvLastPost.setAdapter(postAdapter);
+                Log.d("TAG", "Post clicked: " + postArrayList.toString());
 
 
             }
@@ -213,6 +216,11 @@ public class UserMain extends AppCompatActivity implements View.OnClickListener 
         if(v==btnToAdminPage){
             Intent go = new Intent(this, AdminActivity.class);
             startActivity(go);
+        }
+        if(v==btnGoToAddPost){
+            Intent goAddPost = new Intent(this, CreateNewPost.class);
+            goAddPost.putExtra("forumId",forumId);
+            startActivity(goAddPost);
         }
     }
 }

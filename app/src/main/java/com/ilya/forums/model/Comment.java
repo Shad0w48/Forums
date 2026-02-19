@@ -1,6 +1,8 @@
 package com.ilya.forums.model;
 
-public class Comment {
+import java.io.Serializable;
+
+public class Comment  implements Serializable {
     String author, timestamp, text, parentpostid, authorId;
 
     public Comment() {

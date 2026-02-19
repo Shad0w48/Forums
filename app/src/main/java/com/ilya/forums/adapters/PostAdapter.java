@@ -37,6 +37,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         this.onPostClickListener = onPostClickListener;
     }
 
+
+
+
+    @Override
+    public String toString() {
+        return "PostAdapter{" +
+                "postList=" + postList +
+                ", onPostClickListener=" + onPostClickListener +
+                '}';
+    }
+
     @NonNull
     @Override
     public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -48,9 +59,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     @Override
     public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
         Post post = postList.get(position);
-        holder.content.setText( post.getContent());
-        holder.title.setText(post.getTitle());
-        holder.upvotes.setText( post.getUpVote()+"");
+     //   holder.content.setText( post.getContent());
+      holder.title.setText(post.getTitle());
+    //    holder.upvotes.setText( post.getUpVote()+"");
        //holder.comments.setText("💬 " + post.comments);
 
 
@@ -80,8 +91,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         PostViewHolder(View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.tvPostTitle);
-            content = itemView.findViewById(R.id.tvPostContent);
-            upvotes = itemView.findViewById(R.id.tvVotes);
+          //  content = itemView.findViewById(R.id.tvPostContent);
+          //  upvotes = itemView.findViewById(R.id.tvVotes);
 
 
 

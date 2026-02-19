@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -12,14 +13,20 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.ilya.forums.model.Post;
+
 public class PostViewAfterClick extends AppCompatActivity implements View.OnClickListener {
 
-    String title,content,forumId, userId,time;
 
-    Button btnBack;
-    TextView tvTitle, tvContent,tvForumUser,tvTime;
+    Button btnBack,btnUp,btnDown;
+    ImageView img;
+    TextView tvTitle, tvContent,tvForumUser,tvTime,tvNumberOfVotes;
 
-    int Upvote, Downvote;
+
+    int up,down;
+
+    Post thePost=null;
+    String forumName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,31 +38,55 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
             return insets;
         });
         Intent goToPostViewing = getIntent();
-        title= goToPostViewing.getStringExtra("PostTitle");
-        content=goToPostViewing.getStringExtra("PostContent");
-        forumId=goToPostViewing.getStringExtra("PostForumId");
-        userId=goToPostViewing.getStringExtra("PostUser");
-        time = goToPostViewing.getStringExtra("PostTime");
-        Upvote = goToPostViewing.getIntExtra("PostUpVote");
+        thePost= (Post) goToPostViewing.getSerializableExtra("post");
+
+        forumName= goToPostViewing.getStringExtra("forumName");
+
+
+        img=findViewById(R.id.imgViewingPost);
 
         tvTitle=findViewById(R.id.tvTitleViewingPost);
         tvContent=findViewById(R.id.tvContentViewingPost);
         tvForumUser=findViewById(R.id.tvForumAndUserViewingPost);
         tvTime=findViewById(R.id.tvViewingPostTime);
-        tvTitle.setText(title);
-        tvContent.setText(content);
-        tvForumUser.setText(forumId+"/"+userId);
-        tvTime.setText(time);
+        tvNumberOfVotes=findViewById(R.id.tvPostVotesCount);
+        btnUp=findViewById(R.id.btnPostUpVote);
+        btnDown=findViewById(R.id.btnPostDownVote);
         btnBack=findViewById(R.id.btnViewingBackToMain);
         btnBack.setOnClickListener(this);
+        btnUp.setOnClickListener(this);
+        btnDown.setOnClickListener(this);
 
+
+
+        if(thePost!=null) {
+            tvTitle.setText(thePost.getTitle());
+            tvContent.setText(thePost.getContent());
+            tvForumUser.setText(thePost.getUser().getFname() + "/" +forumName );
+            tvTime.setText(thePost.getTimestamp());
+            up= thePost.getUpVote();
+            down=thePost.getDownVote();
+            tvNumberOfVotes.setText("number of votes:"+(up-down));
+           // img.setImageResource(thePost.getPostPic());
+
+
+        }
 
 
     }
 
     @Override
     public void onClick(View v) {
-        Intent GoBack= new Intent(PostViewAfterClick.this, UserMain.class);
-        startActivity(GoBack);
+        if (v == btnBack) {
+            Intent GoBack= new Intent(PostViewAfterClick.this, UserMain.class);
+            startActivity(GoBack);
+        }
+        if(v==btnUp) {
+            up++;
+        }
+        if(v==btnDown){
+            down++;
+        }
+
     }
 }

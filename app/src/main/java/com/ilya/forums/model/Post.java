@@ -1,6 +1,8 @@
 package com.ilya.forums.model;
 
-public class Post {
+import java.io.Serializable;
+
+public class Post  implements Serializable {
     String postId, title, content,  timestamp;
     User user;
 

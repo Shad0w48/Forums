@@ -1,6 +1,8 @@
 package com.ilya.forums.model;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
     String id, fname, lname, email, phone, password;
     Boolean isAdmin;
 

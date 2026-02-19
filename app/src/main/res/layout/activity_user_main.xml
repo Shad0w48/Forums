@@ -35,9 +35,15 @@
             tools:layout_editor_absoluteX="0dp"
             tools:layout_editor_absoluteY="34dp" />
 
+        <Button
+            android:id="@+id/btnCreatePost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Post" />
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="641dp"
+            android:layout_height="300dp"
             android:orientation="vertical"
             tools:ignore="MissingConstraints"
             tools:layout_editor_absoluteX="0dp"
@@ -57,10 +63,8 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvLastPost"
                 android:layout_width="match_parent"
-                android:layout_height="200dp" />
+                android:layout_height="400dp" />
         </LinearLayout>
-
-
 
 
     </LinearLayout>
