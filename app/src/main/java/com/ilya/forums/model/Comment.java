@@ -1,10 +1,12 @@
 package com.ilya.forums.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Comment  implements Serializable {
     String commentId, timestamp, text, parentpostid;
 
+    Date date;
     User author;
     public Comment() {
     }

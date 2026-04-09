@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -81,6 +83,45 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
 
     }
 
+    private void AddCommentDialog() {
+        // Building the AlertDialog
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+
+        // 2. Inflate the custom layout (addcomment.xml)
+        View dialogView = getLayoutInflater().inflate(R.layout.addcomment, null);
+        builder.setView(dialogView);
+
+        // 3. Create and show the dialog
+        android.app.AlertDialog dialog = builder.create();
+        dialog.show();
+
+        // 4. Handle the views inside the dialog
+        // these views belong to addcomment.xml, so we MUST use dialogView.findViewById()
+        EditText tvCommentContent = dialogView.findViewById(R.id.EtCommentContent);
+        Button btnSubmit = dialogView.findViewById(R.id.btnAddTheComment);  // The first button in addcomment.xml
+        Button btnCancel = dialogView.findViewById(R.id.btnCancelComment); // The second button in addcomment.xml
+
+        // Set what happens when they click Submit
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO: Add your logic here to save the comment to the database
+                Toast.makeText(PostViewAfterClick.this, "dialog works", Toast.LENGTH_SHORT).show();
+
+                // Close the dialog when done
+                dialog.dismiss();
+            }
+        });
+
+        // Set what happens when they click Cancel
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Just close the dialog
+                dialog.dismiss();
+            }
+        });
+    }
     @Override
     public void onClick(View v) {
         if (v == btnBack) {
@@ -94,25 +135,11 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
             down++;
         }
         if(v==btnGoAddComment){
+            AddCommentDialog();
 
-             dialogAddComment = new Dialog(PostViewAfterClick.this);
-            dialogAddComment.requestWindowFeature(Window.FEATURE_NO_TITLE); // בלי כותרת
-            dialog.setContentView(R.layout.my_dialog);
 
-            EditText etName = dialog.findViewById(R.id.etName);
-            Button btnClose = dialog.findViewById(R.id.btnClose);
-
-            btnClose.setOnClickListener(v -> {
-                String name = etName.getText().toString();
-                Toast.makeText(MainActivity.this, name, Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
-            });
-
-            dialog.show();
-
-        });
+        };
 
         }
 
     }
-}

@@ -31,7 +31,7 @@ import com.ilya.forums.services.DatabaseService;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserMain extends AppCompatActivity implements View.OnClickListener {
+public class  UserMain extends AppCompatActivity implements View.OnClickListener {
     private DatabaseService databaseService;
     private FirebaseAuth mAuth;
     String userId;
