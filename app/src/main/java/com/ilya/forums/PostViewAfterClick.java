@@ -1,5 +1,6 @@
 package com.ilya.forums;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -18,7 +19,7 @@ import com.ilya.forums.model.Post;
 public class PostViewAfterClick extends AppCompatActivity implements View.OnClickListener {
 
 
-    Button btnBack,btnUp,btnDown;
+    Button btnBack,btnUp,btnDown,btnGoAddComment;
     ImageView img;
     TextView tvTitle, tvContent,tvForumUser,tvTime,tvNumberOfVotes;
 
@@ -27,6 +28,9 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
 
     Post thePost=null;
     String forumName;
+
+    public Dialog dialogAddComment;
+    public Button btnAdd, btnCancel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +60,8 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
         btnBack.setOnClickListener(this);
         btnUp.setOnClickListener(this);
         btnDown.setOnClickListener(this);
+        btnGoAddComment=findViewById(R.id.btnGOAddComment);
+        btnGoAddComment.setOnClickListener(this);
 
 
 
@@ -86,6 +92,26 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
         }
         if(v==btnDown){
             down++;
+        }
+        if(v==btnGoAddComment){
+
+             dialogAddComment = new Dialog(PostViewAfterClick.this);
+            dialogAddComment.requestWindowFeature(Window.FEATURE_NO_TITLE); // בלי כותרת
+            dialog.setContentView(R.layout.my_dialog);
+
+            EditText etName = dialog.findViewById(R.id.etName);
+            Button btnClose = dialog.findViewById(R.id.btnClose);
+
+            btnClose.setOnClickListener(v -> {
+                String name = etName.getText().toString();
+                Toast.makeText(MainActivity.this, name, Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            });
+
+            dialog.show();
+
+        });
+
         }
 
     }

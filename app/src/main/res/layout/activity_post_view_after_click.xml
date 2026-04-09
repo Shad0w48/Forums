@@ -10,33 +10,33 @@
 
     <TextView
         android:id="@+id/tvTitleViewingPost"
-        android:layout_width="374dp"
-        android:layout_height="29dp"
-        android:layout_marginStart="22dp"
-        android:layout_marginTop="95dp"
-        android:layout_marginEnd="22dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="18dp"
         android:text="Title"
         app:layout_constraintBottom_toTopOf="@+id/imgViewingPost"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/tvForumAndUserViewingPost" />
 
     <TextView
         android:id="@+id/tvForumAndUserViewingPost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="11dp"
+        android:layout_marginTop="64dp"
         android:text="Forum+user"
-        app:layout_constraintBottom_toTopOf="@+id/tvTitleViewingPost"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvViewingPostTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="46dp"
-        android:layout_marginEnd="81dp"
+        android:layout_marginEnd="80dp"
         android:text="Time"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -45,11 +45,12 @@
         android:id="@+id/tvContentViewingPost"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="13dp"
-        android:layout_marginEnd="13dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="12dp"
         android:layout_marginBottom="20dp"
         android:text="Content"
-        app:layout_constraintBottom_toTopOf="@+id/btnPostUpVote"
+        app:layout_constraintBottom_toTopOf="@+id/btnPostDownVote"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imgViewingPost" />
@@ -57,14 +58,15 @@
     <ImageView
         android:id="@+id/imgViewingPost"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="115dp"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="124dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/tvContentViewingPost"
+        android:layout_marginBottom="128dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvPostVotesCount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTitleViewingPost"
+        app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
@@ -72,32 +74,44 @@
         android:layout_width="0dp"
         android:layout_height="42dp"
         android:layout_marginStart="13dp"
-        android:layout_marginTop="324dp"
-        android:layout_marginEnd="94dp"
-        android:layout_marginBottom="322dp"
+        android:layout_marginTop="325dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="323dp"
         android:text="number of votes"
         app:layout_constraintBottom_toBottomOf="@+id/rvPostComment"
-        app:layout_constraintEnd_toStartOf="@+id/btnPostUpVote"
+        app:layout_constraintEnd_toEndOf="@+id/tvForumAndUserViewingPost"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnGOAddComment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="19dp"
+        android:layout_marginEnd="27dp"
+        android:layout_marginBottom="9dp"
+        android:text="add comment"
+        app:layout_constraintBottom_toTopOf="@+id/rvPostComment"
+        app:layout_constraintEnd_toStartOf="@+id/btnPostUpVote"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btnPostUpVote" />
 
     <Button
         android:id="@+id/btnPostUpVote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="23dp"
-        android:layout_marginBottom="18dp"
+        android:layout_marginBottom="17dp"
         android:text="up vote"
         app:layout_constraintBottom_toTopOf="@+id/rvPostComment"
         app:layout_constraintEnd_toStartOf="@+id/btnPostDownVote"
-        app:layout_constraintStart_toEndOf="@+id/tvPostVotesCount"
-        app:layout_constraintTop_toBottomOf="@+id/tvContentViewingPost" />
+        app:layout_constraintStart_toEndOf="@+id/btnGOAddComment" />
 
     <Button
         android:id="@+id/btnPostDownVote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="6dp"
+        android:layout_marginEnd="5dp"
         android:text="down vote"
         app:layout_constraintBaseline_toBaselineOf="@+id/btnPostUpVote"
         app:layout_constraintEnd_toEndOf="parent"
@@ -105,25 +119,23 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPostComment"
-        android:layout_width="395dp"
+        android:layout_width="0dp"
         android:layout_height="231dp"
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
-        android:layout_marginBottom="5dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnClosePost"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnPostUpVote" />
-
-    <Button
-        android:id="@+id/btnClosePost"
-        android:layout_width="133dp"
-        android:layout_height="36dp"
-        android:layout_marginStart="96dp"
-        android:text="Button"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="41dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.236"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnViewingBackToMain"
+        android:layout_width="133dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="5dp"
+        android:text="back"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rvPostComment" />
 

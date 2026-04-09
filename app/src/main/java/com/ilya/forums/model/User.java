@@ -44,6 +44,15 @@ public class User implements Serializable {
 
     }
 
+    public User(User user) {
+        this.id = user.getId();
+        this.fname = user.getFname();
+        this.lname = user.getLname();
+
+    }
+
+
+
     public User() {
     }
 

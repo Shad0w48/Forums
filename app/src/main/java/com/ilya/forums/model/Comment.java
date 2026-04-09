@@ -3,32 +3,17 @@ package com.ilya.forums.model;
 import java.io.Serializable;
 
 public class Comment  implements Serializable {
-    String author, timestamp, text, parentpostid, authorId;
+    String commentId, timestamp, text, parentpostid;
 
+    User author;
     public Comment() {
     }
 
-    public Comment(String author, String timestamp, String text, String parentpostid,String authorId) {
-        this.author = author;
-        this.authorId=authorId;
+    public Comment(String commentId, String timestamp, String text, String parentpostid, User author) {
+        this.commentId = commentId;
         this.timestamp = timestamp;
         this.text = text;
         this.parentpostid = parentpostid;
-    }
-
-    public String getAuthorId() {
-        return authorId;
-    }
-
-    public void setAuthorId(String authorId) {
-        this.authorId = authorId;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
         this.author = author;
     }
 
@@ -56,15 +41,30 @@ public class Comment  implements Serializable {
         this.parentpostid = parentpostid;
     }
 
+    public String getCommentId() {
+        return commentId;
+    }
+
+    public void setCommentId(String commentId) {
+        this.commentId = commentId;
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
+    }
 
     @Override
     public String toString() {
         return "Comment{" +
-                "author='" + author + '\'' +
+                "commentId='" + commentId + '\'' +
                 ", timestamp='" + timestamp + '\'' +
                 ", text='" + text + '\'' +
                 ", parentpostid='" + parentpostid + '\'' +
-                ", authorId='" + authorId + '\'' +
+                ", author=" + author +
                 '}';
     }
 }

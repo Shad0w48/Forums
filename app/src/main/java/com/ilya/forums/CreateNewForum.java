@@ -28,7 +28,7 @@ import java.util.ArrayList;
 public class CreateNewForum extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "Create Forum";
     TextView tvCreateForumtitle;
-    Button btnCreateForum;
+    Button btnCreateForum,btnBack;
     EditText etTitle,etContent;
 
 
@@ -80,6 +80,8 @@ public class CreateNewForum extends AppCompatActivity implements View.OnClickLis
         etContent=findViewById(R.id.etForumDescription);
 
        btnCreateForum.setOnClickListener(this);
+       btnBack=findViewById(R.id.btnBackFromAddForum);
+       btnBack.setOnClickListener(this);
 
 
 
@@ -89,32 +91,43 @@ public class CreateNewForum extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
 
-        timestamp = Timestamp.now();
+        if(v==btnCreateForum){
+            timestamp = Timestamp.now();
 
 
-        title = etTitle.getText().toString();
-        description = etContent.getText().toString();
-        /// Validate input
-        Log.d(TAG, "onClick: Registering user...");
-        String forumId=databaseService.generateForumId()    ;
+            title = etTitle.getText().toString();
+            description = etContent.getText().toString();
+            /// Validate input
+            Log.d(TAG, "onClick: Registering user...");
+            String forumId=databaseService.generateForumId()    ;
 
-        Forum newForum=new Forum(forumId,title,description,currentUser,new ArrayList<>(),timestamp.toString());
+            Forum newForum=new Forum(forumId,title,description,currentUser,new ArrayList<>(),timestamp.toString());
 
-        databaseService.createNewForum(newForum, new DatabaseService.DatabaseCallback<Void>() {
-            @Override
-            public void onCompleted(Void object) {
+            databaseService.createNewForum(newForum, new DatabaseService.DatabaseCallback<Void>() {
+                @Override
+                public void onCompleted(Void object) {
 
 
 
-            }
+                }
 
-            @Override
-            public void onFailed(Exception e) {
+                @Override
+                public void onFailed(Exception e) {
 
-            }
-        });
+                }
+            });
+            Intent GoBack = new Intent(this,AdminActivity.class);
+
+            startActivity(GoBack);
 
 
         }
+        if(v==btnBack){
+            Intent GoBack = new Intent(this,AdminActivity.class);
+            startActivity(GoBack);
+        }
+
+    }
+
 
 }
