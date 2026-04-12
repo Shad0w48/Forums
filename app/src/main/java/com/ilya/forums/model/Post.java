@@ -2,10 +2,12 @@ package com.ilya.forums.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Post  implements Serializable {
-    String postId, title, content,  timestamp;
+    String postId, title, content;
     User user;
+    Date date;
 
 
     int upVote, downVote;
@@ -19,11 +21,11 @@ public class Post  implements Serializable {
     }
 
 
-    public Post(String postId, String title, String content,  User user,String timestamp, int upVote, int downVote, String forumId, String postPic) {
+    public Post(String postId, String title, String content,  User user,Date date, int upVote, int downVote, String forumId, String postPic) {
         this.postId = postId;
         this.title = title;
         this.content = content;
-        this.timestamp = timestamp;
+        this.date = date;
         this.user = user;
         this.upVote = upVote;
         this.downVote = downVote;
@@ -32,12 +34,12 @@ public class Post  implements Serializable {
     }
 
 
-    public Post(String postId, String title, String content, User user, String timestamp, String ForumId, String postPic) {
+    public Post(String postId, String title, String content, User user, Date date, String ForumId, String postPic) {
         this.postId = postId;
         this.title = title;
         this.content = content;
         this.user = user;
-        this.timestamp = timestamp;
+        this.date = date;
         this.upVote = 0;
         this.downVote = 0;
         this.forumId = ForumId;
@@ -87,12 +89,12 @@ public class Post  implements Serializable {
         this.postPic = postPic;
     }
 
-    public String getTimestamp() {
-        return timestamp;
+    public Date getDate() {
+        return date;
     }
 
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public int getUpVote() {
@@ -125,7 +127,7 @@ public class Post  implements Serializable {
                 "postId='" + postId + '\'' +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
-                ", timestamp='" + timestamp + '\'' +
+                ", timestamp='" + date + '\'' +
                 ", user=" + user +
                 ", upVote=" + upVote +
                 ", downVote=" + downVote +

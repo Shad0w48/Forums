@@ -24,20 +24,25 @@ import com.ilya.forums.model.Comment;
 import com.ilya.forums.model.Post;
 import com.ilya.forums.services.DatabaseService;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class PostViewAfterClick extends AppCompatActivity implements View.OnClickListener {
 
    DatabaseService databaseService;
     private static final String TAG = "Viewing the post";
 
+    CommentAdapter commentAdapter;
     Button btnBack,btnUp,btnDown,btnGoAddComment;
     ImageView img;
     TextView tvTitle, tvContent,tvForumUser,tvTime,tvNumberOfVotes;
 
     RecyclerView rvComments;
-    CommentAdapter commentAdapter;
+    ArrayList<Comment> commentArrayList=new ArrayList<>();
+
 
     int up,down;
 
@@ -60,6 +65,8 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
         forumName= goToPostViewing.getStringExtra("forumName");
 
 
+        databaseService=DatabaseService.getInstance();
+
         img=findViewById(R.id.imgViewingPost);
 
         tvTitle=findViewById(R.id.tvTitleViewingPost);
@@ -78,13 +85,26 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
         rvComments = findViewById(R.id.rvPostComment);
         rvComments.setLayoutManager(new LinearLayoutManager(this)); // This tells it to list items vertically
 
+        commentAdapter= new CommentAdapter(commentArrayList);
+
 
 
         if(thePost!=null) {
             tvTitle.setText(thePost.getTitle());
             tvContent.setText(thePost.getContent());
             tvForumUser.setText(thePost.getUser().getFname() + "/" +forumName );
-            tvTime.setText(thePost.getTimestamp());
+            if (thePost.getDate() != null) {
+                // Choose how you want the date to look.
+                // "dd/MM/yyyy HH:mm" will look like: 25/10/2023 14:30
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+
+                // Convert the Date object to a String
+                String formattedDate = sdf.format(thePost.getDate());
+
+                // Set the String into the TextView
+                tvTime.setText(formattedDate);
+            }
+
             up= thePost.getUpVote();
             down=thePost.getDownVote();
             tvNumberOfVotes.setText("number of votes:"+(up-down));
@@ -138,6 +158,22 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
                 Date currentDate= new Date();
                 String postID = thePost.getPostId();
                 Comment newComment = new Comment(commentId,currentDate,commentContent,postID,thePost.getUser());
+                databaseService.createNewComment(newComment, new DatabaseService.DatabaseCallback<Void>() {
+                    @Override
+                    public void onCompleted(Void object) {
+
+
+
+                    }
+
+                    @Override
+                    public void onFailed(Exception e) {
+
+                            Log.d(TAG, "Error from dialog"+e.toString());
+                    }
+
+                });
+
 
                 Toast.makeText(PostViewAfterClick.this, "comment added", Toast.LENGTH_SHORT).show();
 

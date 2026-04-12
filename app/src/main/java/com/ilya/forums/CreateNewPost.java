@@ -40,6 +40,7 @@ import com.ilya.forums.services.DatabaseService;
 import com.ilya.forums.utils.ImageUtil;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class CreateNewPost extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "Create Post";
@@ -151,7 +152,8 @@ public class CreateNewPost extends AppCompatActivity implements View.OnClickList
         /// Validate input
         Log.d(TAG, "onClick: Registering user...");
         String postId=databaseService.generatePostId()    ;
-        Post newPost=new Post(postId,title,description,currentUser,timestamp.toString(),forumId,imagePic);
+        Date currentDate = new Date();
+        Post newPost=new Post(postId,title,description,currentUser,currentDate,forumId,imagePic);
 
         databaseService.createNewPost(newPost, new DatabaseService.DatabaseCallback<Void>() {
             @Override
