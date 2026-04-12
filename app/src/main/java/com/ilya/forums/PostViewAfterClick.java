@@ -3,6 +3,7 @@ package com.ilya.forums;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,24 +16,34 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.ilya.forums.adapters.CommentAdapter;
+import com.ilya.forums.model.Comment;
 import com.ilya.forums.model.Post;
+import com.ilya.forums.services.DatabaseService;
+
+import java.util.Date;
+import java.util.List;
 
 public class PostViewAfterClick extends AppCompatActivity implements View.OnClickListener {
 
+   DatabaseService databaseService;
+    private static final String TAG = "Viewing the post";
 
     Button btnBack,btnUp,btnDown,btnGoAddComment;
     ImageView img;
     TextView tvTitle, tvContent,tvForumUser,tvTime,tvNumberOfVotes;
 
+    RecyclerView rvComments;
+    CommentAdapter commentAdapter;
 
     int up,down;
 
     Post thePost=null;
     String forumName;
 
-    public Dialog dialogAddComment;
-    public Button btnAdd, btnCancel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +75,8 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
         btnDown.setOnClickListener(this);
         btnGoAddComment=findViewById(R.id.btnGOAddComment);
         btnGoAddComment.setOnClickListener(this);
+        rvComments = findViewById(R.id.rvPostComment);
+        rvComments.setLayoutManager(new LinearLayoutManager(this)); // This tells it to list items vertically
 
 
 
@@ -76,9 +89,24 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
             down=thePost.getDownVote();
             tvNumberOfVotes.setText("number of votes:"+(up-down));
            // img.setImageResource(thePost.getPostPic());
+            DatabaseService.getInstance().getCommentList(thePost.getPostId(), new DatabaseService.DatabaseCallback<List<Comment>>() {
+                @Override
+                public void onCompleted(List<Comment> comments) {
+                    // 3. When data arrives, give it to the adapter and show it!
+                    if(comments != null) {
+                        commentAdapter = new CommentAdapter(comments);
+                        rvComments.setAdapter(commentAdapter);
+                    }
+                }
 
+                @Override
+                public void onFailed(Exception e) {
+                    Log.d(TAG, "Error"+e.toString());
+                }
+            });
 
         }
+
 
 
     }
@@ -97,7 +125,7 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
 
         // 4. Handle the views inside the dialog
         // these views belong to addcomment.xml, so we MUST use dialogView.findViewById()
-        EditText tvCommentContent = dialogView.findViewById(R.id.EtCommentContent);
+        EditText EtCommentContent = dialogView.findViewById(R.id.EtCommentContent);
         Button btnSubmit = dialogView.findViewById(R.id.btnAddTheComment);  // The first button in addcomment.xml
         Button btnCancel = dialogView.findViewById(R.id.btnCancelComment); // The second button in addcomment.xml
 
@@ -105,8 +133,13 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: Add your logic here to save the comment to the database
-                Toast.makeText(PostViewAfterClick.this, "dialog works", Toast.LENGTH_SHORT).show();
+                String commentContent = EtCommentContent.getText().toString();
+                String commentId = databaseService.generateCommentId();
+                Date currentDate= new Date();
+                String postID = thePost.getPostId();
+                Comment newComment = new Comment(commentId,currentDate,commentContent,postID,thePost.getUser());
+
+                Toast.makeText(PostViewAfterClick.this, "comment added", Toast.LENGTH_SHORT).show();
 
                 // Close the dialog when done
                 dialog.dismiss();

@@ -8,6 +8,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.ilya.forums.model.Comment;
 import com.ilya.forums.model.Forum;
 import com.ilya.forums.model.User;
 import com.ilya.forums.model.Post;
@@ -45,6 +46,7 @@ public class DatabaseService {
     /// @see DatabaseService#readData(String)
     private static final String USERS_PATH = "users",
                                 POSTS_PATH = "forums_posts",
+                                COMMENTS_PATH = "posts_comments",
                                 FORUMS_PATH = "forums";
 
     /// callback interface for database operations
@@ -514,6 +516,44 @@ public class DatabaseService {
     public void deleteForum(@NotNull final String forumId, @Nullable final DatabaseCallback<Void> callback) {
         deleteData(FORUMS_PATH + "/" + forumId, callback);
     }
+
+
+    /// create a new comment in the database
+    /// @param comment the post object to create
+    /// @param callback the callback to call when the operation is completed
+    ///              the callback will receive void
+    ///             if the operation fails, the callback will receive an exception
+    /// @see DatabaseCallback
+    /// @see Comment
+    public void createNewComment(@NotNull final Comment comment, @Nullable final DatabaseCallback<Void> callback) {
+        writeData( COMMENTS_PATH + "/" + comment.getParentpostid()+"/"+comment.getCommentId(), comment, callback);
+    }
+
+    /// get all the comments from the database
+    /// @param callback the callback to call when the operation is completed
+    ///              the callback will receive a list of comment objects
+    ///            if the operation fails, the callback will receive an exception
+    /// @see DatabaseCallback
+    /// @see List
+    /// @see Comment
+    public void getCommentList(String commentId,   @NotNull final DatabaseCallback<List<Comment>> callback) {
+        getDataList(COMMENTS_PATH+"/"+ commentId +"/", Comment.class, callback);
+    }
+
+    /// generate a new id for a new comment in the database
+    /// @return a new id for the comment
+    /// @see #generateNewId(String)
+    /// @see Comment
+    public  String generateCommentId() {return generateNewId(COMMENTS_PATH); }
+    /// delete a comment from the database
+    /// @param commentId the id of the comment to delete
+    /// @param callback the callback to call when the operation is completed
+    public void deleteComment(@NotNull final String commentId, @Nullable final DatabaseCallback<Void> callback) {
+        deleteData(COMMENTS_PATH + "/" + commentId, callback);
+    }
+
+
+
 
     // endregion forum section
 

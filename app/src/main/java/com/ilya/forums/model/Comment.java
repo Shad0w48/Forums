@@ -4,27 +4,27 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class Comment  implements Serializable {
-    String commentId, timestamp, text, parentpostid;
+    String commentId, text, parentpostid;
 
     Date date;
     User author;
     public Comment() {
     }
 
-    public Comment(String commentId, String timestamp, String text, String parentpostid, User author) {
+    public Comment(String commentId, Date date, String text, String parentpostid, User author) {
         this.commentId = commentId;
-        this.timestamp = timestamp;
+        this.date = date;
         this.text = text;
         this.parentpostid = parentpostid;
         this.author = author;
     }
 
-    public String getTimestamp() {
-        return timestamp;
+    public Date getDate() {
+        return date;
     }
 
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public String getText() {
@@ -63,7 +63,7 @@ public class Comment  implements Serializable {
     public String toString() {
         return "Comment{" +
                 "commentId='" + commentId + '\'' +
-                ", timestamp='" + timestamp + '\'' +
+                ", date='" + date + '\'' +
                 ", text='" + text + '\'' +
                 ", parentpostid='" + parentpostid + '\'' +
                 ", author=" + author +

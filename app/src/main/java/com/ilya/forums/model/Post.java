@@ -1,6 +1,7 @@
 package com.ilya.forums.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Post  implements Serializable {
     String postId, title, content,  timestamp;
@@ -42,6 +43,7 @@ public class Post  implements Serializable {
         this.forumId = ForumId;
         this.postPic=postPic;
     }
+
 
 
 
