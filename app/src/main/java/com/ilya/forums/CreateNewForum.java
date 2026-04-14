@@ -24,6 +24,7 @@ import com.ilya.forums.model.User;
 import com.ilya.forums.services.DatabaseService;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class CreateNewForum extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "Create Forum";
@@ -101,7 +102,8 @@ public class CreateNewForum extends AppCompatActivity implements View.OnClickLis
             Log.d(TAG, "onClick: Registering user...");
             String forumId=databaseService.generateForumId()    ;
 
-            Forum newForum=new Forum(forumId,title,description,currentUser,new ArrayList<>(),timestamp.toString());
+            Date currentDate = new Date();
+            Forum newForum=new Forum(forumId,title,description,currentUser,currentDate);
 
             databaseService.createNewForum(newForum, new DatabaseService.DatabaseCallback<Void>() {
                 @Override

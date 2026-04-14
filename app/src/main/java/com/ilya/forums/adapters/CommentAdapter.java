@@ -35,7 +35,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         Comment comment = commentList.get(position);
 
         // Put the data into the TextViews
-        holder.tvAuthor.setText(comment.getAuthor().getFname()+comment.getAuthor().getLname());
+        holder.tvAuthor.setText(comment.getAuthor().getFname()+" "+comment.getAuthor().getLname());
         holder.tvText.setText(comment.getText());
         if (comment.getDate() != null) {
             // Choose how you want the date to look.

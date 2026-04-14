@@ -44,9 +44,10 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
             return insets;
         });
 
+        databaseService=databaseService.getInstance();
 
         selectedUid = getIntent().getStringExtra("USER_UID");
-     //   User currentUser = SharedPreferencesUtil.getUser(this);
+        //User currentUser = SharedPreferencesUtil.getUser(this);
    //     assert currentUser != null;
 
     //    if (selectedUid == null) {
@@ -73,7 +74,7 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
         tvUserDisplayEmail = findViewById(R.id.tv_user_display_email);
         btnUpdateProfile = findViewById(R.id.btn_edit_profile);
         btnSignOut = findViewById(R.id.btn_sign_out);
-     //   adminBadge = findViewById(R.id.admin_badge);
+       //adminBadge = findViewById(R.id.adminBadge);
 
         btnUpdateProfile.setOnClickListener(this);
         btnSignOut.setOnClickListener(this);
@@ -116,13 +117,13 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
                 tvUserDisplayEmail.setText(user.getEmail());
 
                 // Show/hide admin badge based on user's admin status
-                if (user.getIsAdmin()) {
-                    adminBadge.setVisibility(View.VISIBLE);
-                    Log.d(TAG, "User is admin, showing admin badge");
-                } else {
-                    adminBadge.setVisibility(View.GONE);
-                    Log.d(TAG, "User is not admin, hiding admin badge");
-                }
+                //if (user.getIsAdmin()) {
+                    //adminBadge.setVisibility(View.VISIBLE);
+                    //Log.d(TAG, "User is admin, showing admin badge");
+                //} else {
+                    //adminBadge.setVisibility(View.GONE);
+                   // Log.d(TAG, "User is not admin, hiding admin badge");
+                //}
             }
 
             @Override

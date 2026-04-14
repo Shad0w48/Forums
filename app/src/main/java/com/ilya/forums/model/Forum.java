@@ -3,6 +3,7 @@ package com.ilya.forums.model;
 
 import com.google.firebase.Timestamp;
 
+import java.util.Date;
 import java.util.List;
 
 public class Forum {
@@ -12,15 +13,13 @@ public class Forum {
     private String name;
     private String description;
     private User creator;
-    List<Post> postList;
-    private String createdAt;
+    private Date createdAt;
 
-    public Forum(String forumId, String name, String description, User creator, List<Post> postList, String createdAt) {
+    public Forum(String forumId, String name, String description, User creator, Date createdAt) {
         this.forumId = forumId;
         this.name = name;
         this.description = description;
         this.creator = creator;
-        this.postList = postList;
         this.createdAt = createdAt;
     }
 
@@ -65,19 +64,23 @@ public class Forum {
         this.creator = creator;
     }
 
-    public List<Post> getPostList() {
-        return postList;
-    }
 
-    public void setPostList(List<Post> postList) {
-        this.postList = postList;
-    }
-
-    public String getCreatedAt() {
+    public Date getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(String createdAt) {
+    public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    @Override
+    public String toString() {
+        return "Forum{" +
+                "forumId='" + forumId + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", creator=" + creator +
+                ", createdAt='" + createdAt + '\'' +
+                '}';
     }
 }

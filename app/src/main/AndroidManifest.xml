@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Forums">
         <activity
+            android:name=".InsideTheForum"
+            android:exported="false" />
+        <activity
             android:name=".PostViewAfterClick"
             android:exported="false" />
         <activity

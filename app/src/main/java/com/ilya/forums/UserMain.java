@@ -118,15 +118,15 @@ public class  UserMain extends AppCompatActivity implements View.OnClickListener
             @Override
             public void onForumClick(Forum forum) {
                 forumId=forum.getForumId();
-
-
                readPosts(forumId);
                forumName=forum.getName();
 
 
 
                 Log.d("TAG", "Forum clicked: " + forumId);
-
+                Intent goToForum = new Intent(UserMain.this, InsideTheForum.class);
+                goToForum.putExtra("ForumId",forumId);
+                startActivity(goToForum);
 
             }
 

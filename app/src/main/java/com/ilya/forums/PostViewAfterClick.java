@@ -45,6 +45,8 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
 
 
     int up,down;
+    // 0 = no vote, 1 = upvoted, -1 = downvoted
+    int currentVoteState = 0;
 
     Post thePost=null;
     String forumName;
@@ -92,7 +94,7 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
         if(thePost!=null) {
             tvTitle.setText(thePost.getTitle());
             tvContent.setText(thePost.getContent());
-            tvForumUser.setText(thePost.getUser().getFname() + "/" +forumName );
+            tvForumUser.setText( forumName+ "/" + thePost.getUser().getFname() );
             if (thePost.getDate() != null) {
                 // Choose how you want the date to look.
                 // "dd/MM/yyyy HH:mm" will look like: 25/10/2023 14:30
@@ -107,7 +109,8 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
 
             up= thePost.getUpVote();
             down=thePost.getDownVote();
-            tvNumberOfVotes.setText("number of votes:"+(up-down));
+            updateVoteText(); // Helper method to update text
+            //tvNumberOfVotes.setText("votes:"+(up-down));
            // img.setImageResource(thePost.getPostPic());
             DatabaseService.getInstance().getCommentList(thePost.getPostId(), new DatabaseService.DatabaseCallback<List<Comment>>() {
                 @Override
@@ -129,6 +132,11 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
 
 
 
+    }
+
+    // A helper method so you don't repeat this line multiple times
+    private void updateVoteText() {
+        tvNumberOfVotes.setText("number of votes:" + (up - down));
     }
 
     private void AddCommentDialog() {
@@ -197,12 +205,41 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
             Intent GoBack= new Intent(PostViewAfterClick.this, UserMain.class);
             startActivity(GoBack);
         }
-        if(v==btnUp) {
-            up++;
+        else if (v == btnUp) {
+            if (currentVoteState == 1) {
+                // User already upvoted, clicking again cancels their upvote
+                up--;
+                currentVoteState = 0;
+            } else if (currentVoteState == -1) {
+                // User had a downvote, changing to an upvote
+                down--;
+                up++;
+                currentVoteState = 1;
+            } else {
+                // User had no vote, adding upvote
+                up++;
+                currentVoteState = 1;
+            }
+            updateVoteText();
         }
-        if(v==btnDown){
-            down++;
+        else if (v == btnDown) {
+            if (currentVoteState == -1) {
+                // User already downvoted, clicking again cancels their downvote
+                down--;
+                currentVoteState = 0;
+            } else if (currentVoteState == 1) {
+                // User had an upvote, changing to a downvote
+                up--;
+                down++;
+                currentVoteState = -1;
+            } else {
+                // User had no vote, adding downvote
+                down++;
+                currentVoteState = -1;
+            }
+            updateVoteText();
         }
+
         if(v==btnGoAddComment){
             AddCommentDialog();
 
