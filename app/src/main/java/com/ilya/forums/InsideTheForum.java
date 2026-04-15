@@ -15,23 +15,30 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.ilya.forums.adapters.PostAdapter;
 import com.ilya.forums.model.Forum;
 import com.ilya.forums.model.Post;
+import com.ilya.forums.model.User;
 import com.ilya.forums.services.DatabaseService;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class InsideTheForum extends AppCompatActivity implements View.OnClickListener {
 
     TextView tvName, tvDate, tvDescription;
-    Button btnNewPost;
+    private FirebaseAuth mAuth;
+
+    Button btnBack, btnNewPost;
     ArrayList<Post> postArrayList=new ArrayList<>();
     DatabaseService databaseService;
     RecyclerView rvPostOfForum;
     PostAdapter postAdapter;
     String forumId="",forumName="";
+    Forum currentForum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,12 +57,41 @@ public class InsideTheForum extends AppCompatActivity implements View.OnClickLis
         databaseService=databaseService.getInstance();
         rvPostOfForum=findViewById(R.id.rvPostOfForum);
         rvPostOfForum.setLayoutManager(new LinearLayoutManager(this));
-
-        rvPostOfForum.setAdapter(postAdapter);
+        mAuth = FirebaseAuth.getInstance();
         Intent goToForum = getIntent();
         forumId = goToForum.getStringExtra("ForumId");
+        databaseService.getForum(forumId,  new DatabaseService.DatabaseCallback<Forum>() {
+
+
+            @Override
+            public void onCompleted(Forum object) {
+                currentForum = object;
+                forumName=object.getName();
+                if (currentForum.getCreatedAt() != null) {
+                    // Choose how you want the date to look.
+                    // "dd/MM/yyyy HH:mm" will look like: 25/10/2023 14:30
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+
+                    // Convert the Date object to a String
+                    String formattedDate = sdf.format(currentForum.getCreatedAt());
+
+                    // Set the String into the TextView
+                    tvDate.setText(formattedDate);
+                }
+
+                tvDescription.setText(currentForum.getDescription());
+                tvName.setText(currentForum.getName());
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+                Log.e("InsideTheForum", "Failed to load forum: " + e.getMessage());
+            }
+        });
         btnNewPost=findViewById(R.id.btnNewPost);
         btnNewPost.setOnClickListener(this);
+        btnBack=findViewById(R.id.btnBackFromInsideForum);
+        btnBack.setOnClickListener(this);
 
 
         postAdapter = new PostAdapter(postArrayList, new PostAdapter.OnPostClickListener() {
@@ -80,7 +116,9 @@ public class InsideTheForum extends AppCompatActivity implements View.OnClickLis
 
 
 
-        readPosts(forumName);
+        readPosts(forumId);
+        rvPostOfForum.setAdapter(postAdapter);
+
     }
     private void readPosts(String forumId) {
         databaseService.getPostList(forumId, new DatabaseService.DatabaseCallback<List<Post>>() {
@@ -111,9 +149,13 @@ public class InsideTheForum extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View view) {
         if(view==btnNewPost){
-            Intent goAddPost = new Intent(this, CreateNewPost.class);
+            Intent goAddPost = new Intent(InsideTheForum.this, CreateNewPost.class);
             goAddPost.putExtra("forumId",forumId);
             startActivity(goAddPost);
+        }
+        if (view==btnBack){
+            Intent goBack = new Intent(InsideTheForum.this, UserMain.class);
+            startActivity(goBack);
         }
     }
 }

@@ -144,7 +144,12 @@ public class CreateNewPost extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
 
-        timestamp = Timestamp.now();
+
+        if(v==btnBack){
+            Intent goBack = new Intent(CreateNewPost.this, InsideTheForum.class);
+            goBack.putExtra("ForumId",forumId);
+            startActivity(goBack);
+        }
 
         String imagePic = ImageUtil.convertTo64Base(ivIPic);
         title = etPostTitle.getText().toString();

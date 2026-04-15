@@ -68,8 +68,7 @@ public class  UserMain extends AppCompatActivity implements View.OnClickListener
         btnToAdminPage.setOnClickListener(this);
         userId = mAuth.getCurrentUser().getUid();
 
-        rvLastPost=findViewById(R.id.rvLastPost);
-        rvLastPost.setLayoutManager(new LinearLayoutManager(this));
+
         databaseService.getUser(userId,  new DatabaseService.DatabaseCallback<User>() {
             @Override
             public void onCompleted(User user) {
@@ -86,29 +85,7 @@ public class  UserMain extends AppCompatActivity implements View.OnClickListener
 
 
 
-        postAdapter = new PostAdapter(postArrayList, new PostAdapter.OnPostClickListener() {
-            @Override
-            public void onPostClick(Post post) {
-                Log.d("TAG", "Post clicked: " + post.toString());
 
-                Intent goToPostViewing = new Intent(UserMain.this, PostViewAfterClick.class);
-
-                goToPostViewing.putExtra("post",post);
-                goToPostViewing.putExtra("forumName",forumName);
-
-                startActivity(goToPostViewing);
-
-            }
-
-            @Override
-            public void onLongPostClick(Post post) {
-
-            }
-        } );
-
-
-
-        rvLastPost.setAdapter(postAdapter);
 
 
 
@@ -118,7 +95,6 @@ public class  UserMain extends AppCompatActivity implements View.OnClickListener
             @Override
             public void onForumClick(Forum forum) {
                 forumId=forum.getForumId();
-               readPosts(forumId);
                forumName=forum.getName();
 
 
@@ -146,17 +122,14 @@ public class  UserMain extends AppCompatActivity implements View.OnClickListener
             @Override
             public void onCompleted(List<Forum> forums) {
 
-              for(int i=0; i<forums.size();i++){
-
-                  forumArrayList.add( new Forum(forums.get(i)));
-
-              }
+                forumArrayList.clear(); // Always good practice to clear the old list first
+                forumArrayList.addAll(forums); // Add the Firebase objects directly!
 
 
 
 
                 forumAdapter.notifyDataSetChanged();
-                Log.d("jkh",forums.toString());
+                Log.d("gg",forums.toString());
 
 
             }
@@ -177,33 +150,7 @@ public class  UserMain extends AppCompatActivity implements View.OnClickListener
 
     }
 
-    private void readPosts(String forumId) {
-        databaseService.getPostList(forumId, new DatabaseService.DatabaseCallback<List<Post>>() {
-            @Override
-            public void onCompleted(List<Post> postList) {
-                postArrayList.clear();
 
-
-                postArrayList.addAll(postList);
-
-
-
-                postAdapter.notifyDataSetChanged();
-
-                rvLastPost.setAdapter(postAdapter);
-                Log.d("TAG", "Post clicked: " + postArrayList.toString());
-
-
-            }
-
-            @Override
-            public void onFailed(Exception e) {
-                Log.d("Post", "Post error: " + e);
-
-            }
-        });
-
-    }
 
 
     @Override

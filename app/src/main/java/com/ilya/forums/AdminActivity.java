@@ -11,9 +11,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.ilya.forums.model.User;
+
 public class AdminActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button btnAddForum, btnUserManage;
+    Button btnBack,btnAddForum, btnUserManage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +30,8 @@ public class AdminActivity extends AppCompatActivity implements View.OnClickList
         btnAddForum.setOnClickListener(this);
         btnUserManage=findViewById(R.id.btnUserManage);
         btnUserManage.setOnClickListener(this);
+        btnBack=findViewById(R.id.btnBackFromAdmin);
+        btnBack.setOnClickListener(this);
     }
 
     @Override
@@ -39,6 +43,10 @@ public class AdminActivity extends AppCompatActivity implements View.OnClickList
         if(v==btnUserManage){
             Intent goUL=new Intent(this,UsersListActivity.class);
             startActivity(goUL);
+        }
+        if(v==btnBack){
+            Intent goBack= new Intent(AdminActivity.this, UserMain.class);
+            startActivity(goBack);
         }
     }
 }
