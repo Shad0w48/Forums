@@ -85,7 +85,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
 
-        User user = new User("lkkkk", fname, lname, email, phone, password, null);
+        User user = new User("lkkkk", fname, lname, email, phone, password, false);
 
         createUserInDatabase(user);
 

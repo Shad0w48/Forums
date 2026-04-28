@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">Forums</string>
+    <string name="version_label">גרסה: 1.0.0</string>
+
+    <string name="creds_title">אודות האפליקציה</string>
+    <string name="developer_title">מפתח ומעצב:</string>
+    <string name="developer_name">איליה (Ilya)</string>
+
+    <string name="about_description">Forums היא פלטפורמה חברתית מודרנית המאפשרת למשתמשים לפתוח קהילות (פורומים), לשתף פוסטים עם תמונות ולנהל דיונים בזמן אמת. האפליקציה נבנתה כפרויקט המשלב פיתוח אנדרואיד מתקדם עם שירותי ענן.</string>
+
+    <string name="tech_stack_title">טכנולוגיות בשימוש:</string>
+    <string name="tech_stack_details">
+        • Firebase Realtime Database\n
+        • Firebase Authentication\n
+        • Glide (Image Loading Library)\n
+        • Material Design Components\n
+        • Java &amp; Android SDK 30+
+    </string>
+
+    <string name="copyright_text">כל הזכויות שמורות © 2024</string>
 </resources>

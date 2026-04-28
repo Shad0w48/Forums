@@ -29,7 +29,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvHello"
-        app:srcCompat="@mipmap/icon" />
+        app:srcCompat="@drawable/logo100" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLogIn"

@@ -16,27 +16,39 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/icon" />
+        app:srcCompat="@drawable/logo50" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnToAdminPage2"
-        style="?android:attr/buttonBarButtonStyle"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="10dp"
         android:text="Admin"
-        android:textColor="#D32F2F"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
         android:visibility="invisible"
+        app:backgroundTint="#D32F2F"
+        app:cornerRadius="12dp"
         app:layout_constraintBottom_toBottomOf="@+id/imglogoUmain"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imglogoUmain" />
+        app:layout_constraintTop_toTopOf="@+id/imglogoUmain"
+        tools:visibility="visible" />
 
-    <Button
-        android:id="@+id/btnCreatePost"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnEditProfileUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:text="Add Post"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="10dp"
+        android:text="Edit Profile"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        app:backgroundTint="#03A9F4"
+        app:cornerRadius="12dp"
         app:layout_constraintBottom_toBottomOf="@+id/imglogoUmain"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/imglogoUmain" />
@@ -57,14 +69,15 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvForum"
         android:layout_width="0dp"
-        android:layout_height="160dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvForumsTitle" />
-
-
+        app:layout_constraintTop_toBottomOf="@+id/tvForumsTitle"
+        tools:listitem="@layout/item_forum" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

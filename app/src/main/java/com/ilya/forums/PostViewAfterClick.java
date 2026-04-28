@@ -23,6 +23,7 @@ import com.ilya.forums.adapters.CommentAdapter;
 import com.ilya.forums.model.Comment;
 import com.ilya.forums.model.Post;
 import com.ilya.forums.services.DatabaseService;
+import com.ilya.forums.utils.ImageUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -111,7 +112,33 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
             down=thePost.getDownVote();
             updateVoteText(); // Helper method to update text
             //tvNumberOfVotes.setText("votes:"+(up-down));
-           // img.setImageResource(thePost.getPostPic());
+
+
+
+            // We get the Base64 string from the post
+            String base64String = thePost.getPostPic();
+
+            // Check if the string exists and is not empty
+            if (base64String != null && !base64String.trim().isEmpty()) {
+
+                // 1. Convert the string into bytes
+                byte[] decodedString = android.util.Base64.decode(base64String, android.util.Base64.DEFAULT);
+
+                // 2. Convert the bytes into a Bitmap
+                android.graphics.Bitmap decodedByte = android.graphics.BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+                // 3. Set the Bitmap to your ImageView
+                img.setImageBitmap(decodedByte);
+
+                // 4. MAKE SURE IT IS VISIBLE (Just in case it was hidden previously)
+                img.setVisibility(View.VISIBLE);
+
+            } else {
+                // THERE IS NO IMAGE!
+                // Completely remove the ImageView from the screen to close the gap:
+                img.setVisibility(View.GONE);
+            }
+
             DatabaseService.getInstance().getCommentList(thePost.getPostId(), new DatabaseService.DatabaseCallback<List<Comment>>() {
                 @Override
                 public void onCompleted(List<Comment> comments) {

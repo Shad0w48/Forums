@@ -5,84 +5,79 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp"
     android:background="#F8F9FA"
+    android:padding="24dp"
     tools:context=".AdminActivity">
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/tvAdminPanel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="Administrator Panel"
-        android:textSize="24sp"
-        android:textStyle="bold"
         android:textColor="@color/black"
+        android:textSize="28sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnUserManage"
-        style="@style/Widget.MaterialComponents.Button.Icon"
         android:layout_width="0dp"
-        android:layout_height="70dp"
-        android:layout_marginTop="48dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="64dp"
         android:text="User Management"
+        android:textColor="@android:color/white"
         android:textSize="16sp"
-        android:insetBottom="0dp"
-        android:insetTop="0dp"
-        app:iconGravity="textStart"
+        app:backgroundTint="#03A9F4"
         app:cornerRadius="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        app:layout_constraintTop_toBottomOf="@+id/tvAdminPanel" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnAddAdmin"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="0dp"
-        android:layout_height="70dp"
+        android:layout_height="60dp"
         android:layout_marginTop="16dp"
         android:text="Add Another Admin"
+        android:textColor="@android:color/white"
         android:textSize="16sp"
+        app:backgroundTint="#03A9F4"
         app:cornerRadius="12dp"
-        app:strokeWidth="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnUserManage" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnAddForum"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="0dp"
-        android:layout_height="70dp"
+        android:layout_height="60dp"
         android:layout_marginTop="16dp"
         android:text="Create New Forum"
+        android:textColor="@android:color/white"
         android:textSize="16sp"
+        app:backgroundTint="#03A9F4"
         app:cornerRadius="12dp"
-        app:strokeWidth="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnAddAdmin" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="System Version 1.0.2"
-        android:textColor="#9E9E9E"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnBackFromAdmin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="go back"
-        tools:layout_editor_absoluteX="160dp"
-        tools:layout_editor_absoluteY="411dp" />
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="32dp"
+        android:text="Go Back"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        app:backgroundTint="#78909C"
+        app:cornerRadius="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnAddForum" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

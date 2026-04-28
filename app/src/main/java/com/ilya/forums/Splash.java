@@ -23,22 +23,27 @@ public class Splash extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        imageView=(ImageView) findViewById(R.id.imageView2);
-        Thread mSplashThread = new Thread(){
-          @Override
-          public void run(){
-              try {
-                  synchronized (this) {
-                      wait(3000);
-                  }
-
-              }
-              catch(InterruptedException ex){
-
-              }
-              finish();
-              Intent intent= new Intent(Splash.this,LogInPage.class);
-          }
+        imageView=(ImageView) findViewById(R.id.imgSplash);
+        // Load the GIF using Glide
+        com.bumptech.glide.Glide.with(this)
+                .asGif()
+                .load(R.drawable.gif100)
+                .into(imageView);
+        Thread mSplashThread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    synchronized (this) {
+                        wait(3000); // 3-second delay
+                    }
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+                finish();
+                // Add startActivity here to actually move to the next page
+                Intent intent = new Intent(Splash.this, MainActivity.class);
+                startActivity(intent);
+            }
         };
         mSplashThread.start();
     }

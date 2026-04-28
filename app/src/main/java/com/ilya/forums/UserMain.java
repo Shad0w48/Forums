@@ -35,7 +35,7 @@ public class  UserMain extends AppCompatActivity implements View.OnClickListener
     private DatabaseService databaseService;
     private FirebaseAuth mAuth;
     String userId;
-    Button btnToAdminPage,btnGoToAddPost;
+    Button btnToAdminPage,btnGoToEdit;
 
     RecyclerView rvForum, rvLastPost;
 
@@ -60,8 +60,8 @@ public class  UserMain extends AppCompatActivity implements View.OnClickListener
         });
          rvForum = findViewById(R.id.rvForum);
 
-         btnGoToAddPost=findViewById(R.id.btnCreatePost);
-         btnGoToAddPost.setOnClickListener(this);
+         btnGoToEdit=findViewById(R.id.btnEditProfileUser);
+         btnGoToEdit.setOnClickListener(this);
         databaseService = DatabaseService.getInstance();
         mAuth = FirebaseAuth.getInstance();
         btnToAdminPage=findViewById(R.id.btnToAdminPage2);
@@ -164,10 +164,10 @@ public class  UserMain extends AppCompatActivity implements View.OnClickListener
             Intent go = new Intent(this, AdminActivity.class);
             startActivity(go);
         }
-        if(v==btnGoToAddPost){
-            Intent goAddPost = new Intent(this, CreateNewPost.class);
-            goAddPost.putExtra("forumId",forumId);
-            startActivity(goAddPost);
+        if(v==btnGoToEdit){
+            Intent goEdit = new Intent(this, UserProfileActivity.class);
+            goEdit.putExtra("USER_UID",userId);
+            startActivity(goEdit);
         }
     }
 }
