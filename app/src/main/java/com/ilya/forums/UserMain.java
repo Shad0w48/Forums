@@ -9,6 +9,7 @@ import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -44,6 +45,8 @@ public class  UserMain extends AppCompatActivity implements View.OnClickListener
     PostAdapter postAdapter;
     private ForumAdapter forumAdapter;
     String forumId, forumName="";
+    SearchView searchView;
+
 
 
 
@@ -59,6 +62,17 @@ public class  UserMain extends AppCompatActivity implements View.OnClickListener
             return insets;
         });
          rvForum = findViewById(R.id.rvForum);
+         searchView = findViewById(R.id.searchViewForums);
+
+         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                forumAdapter.filter(newText); // This triggers the filter in ForumAdapter
+                return true;
+            }
+            @Override
+            public boolean onQueryTextSubmit(String query) { return false; }
+        });
 
          btnGoToEdit=findViewById(R.id.btnEditProfileUser);
          btnGoToEdit.setOnClickListener(this);
@@ -94,16 +108,19 @@ public class  UserMain extends AppCompatActivity implements View.OnClickListener
         forumAdapter = new ForumAdapter(forumArrayList, new ForumAdapter.OnForumClickListener() {
             @Override
             public void onForumClick(Forum forum) {
-                forumId=forum.getForumId();
-               forumName=forum.getName();
+                if (forum == null) {
+                    Log.e("TAG", "The forum object is NULL!");
+                    return;
+                }
 
+                forumId = forum.getForumId();
+                Log.d("TAG", "Moving to InsideTheForum with ID: " + forumId);
 
-
-                Log.d("TAG", "Forum clicked: " + forumId);
                 Intent goToForum = new Intent(UserMain.this, InsideTheForum.class);
-                goToForum.putExtra("ForumId",forumId);
+                goToForum.putExtra("ForumId", forumId);
+                // הצעה: תעביר גם את השם ליתר ביטחון אם תרצה להציג אותו למעלה
+                goToForum.putExtra("ForumName", forum.getName());
                 startActivity(goToForum);
-
             }
 
             @Override
@@ -122,27 +139,25 @@ public class  UserMain extends AppCompatActivity implements View.OnClickListener
             @Override
             public void onCompleted(List<Forum> forums) {
 
-                forumArrayList.clear(); // Always good practice to clear the old list first
-                forumArrayList.addAll(forums); // Add the Firebase objects directly!
+                if (forumAdapter != null && forums != null) {
+                    forumAdapter.setForumList(forums); // זה מעדכן את האדפטר והגיבוי!
+                }
 
-
-
-
-                forumAdapter.notifyDataSetChanged();
-                Log.d("gg",forums.toString());
-
-
+                Log.d("gg", forums.toString());
             }
-
-
 
             @Override
             public void onFailed(Exception e) {
-
-
-                Log.d("error",e.toString());
+                Log.d("error", e.toString());
             }
         });
+
+
+
+
+
+
+
 
 
 

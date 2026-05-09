@@ -18,21 +18,24 @@ import java.util.List;
 
 public class ForumAdapter extends RecyclerView.Adapter<ForumAdapter.ViewHolder> {
 
-
     public interface OnForumClickListener {
         void onForumClick(Forum forum);
         void onLongForumClick(Forum forum);
     }
 
     private final List<Forum> forumList;
+    private List<Forum> forumListFull; // Added: Backup list for filtering
     private final ForumAdapter.OnForumClickListener onForumClickListener;
+
     public ForumAdapter(@Nullable final ForumAdapter.OnForumClickListener onForumClickListener) {
         forumList = new ArrayList<>();
+        forumListFull = new ArrayList<>(); // Initialize backup
         this.onForumClickListener = onForumClickListener;
     }
 
     public ForumAdapter(List<Forum> forumList, OnForumClickListener onForumClickListener) {
         this.forumList = forumList;
+        this.forumListFull = new ArrayList<>(forumList); // Copy initial data to backup
         this.onForumClickListener = onForumClickListener;
     }
 
@@ -60,7 +63,6 @@ public class ForumAdapter extends RecyclerView.Adapter<ForumAdapter.ViewHolder> 
             initials += forum.getDescription().charAt(0);
         }
 
-
         // Show admin chip if forum is admin
 //        if (forum.getIsAdmin()) {
 //            holder.chipRole.setVisibility(View.VISIBLE);
@@ -81,7 +83,6 @@ public class ForumAdapter extends RecyclerView.Adapter<ForumAdapter.ViewHolder> 
             }
             return true;
         });
-
     }
 
     @Override
@@ -89,40 +90,67 @@ public class ForumAdapter extends RecyclerView.Adapter<ForumAdapter.ViewHolder> 
         return forumList.size();
     }
 
+    // Added: Core filter logic for the search bar
+    public void filter(String text) {
+        forumList.clear();
+        if (text.isEmpty()) {
+            forumList.addAll(forumListFull);
+        } else {
+            String query = text.toLowerCase().trim();
+            for (Forum item : forumListFull) {
+                if (item.getName() != null && item.getName().toLowerCase().contains(query)) {
+                    forumList.add(item);
+                }
+            }
+        }
+        notifyDataSetChanged();
+    }
+
     public void setForumList(List<Forum> forums) {
         forumList.clear();
         forumList.addAll(forums);
+        forumListFull = new ArrayList<>(forums); // Sync backup list
         notifyDataSetChanged();
     }
 
     public void addForum(Forum forum) {
         forumList.add(forum);
+        forumListFull.add(forum); // Sync backup list
         notifyItemInserted(forumList.size() - 1);
     }
+
     public void updateForum(Forum forum) {
+        // Update main list
         int index = forumList.indexOf(forum);
-        if (index == -1) return;
-        forumList.set(index, forum);
-        notifyItemChanged(index);
+        if (index != -1) {
+            forumList.set(index, forum);
+            notifyItemChanged(index);
+        }
+        // Update backup list
+        int fullIndex = forumListFull.indexOf(forum);
+        if (fullIndex != -1) {
+            forumListFull.set(fullIndex, forum);
+        }
     }
 
     public void removeForum(Forum forum) {
+        // Remove from main list
         int index = forumList.indexOf(forum);
-        if (index == -1) return;
-        forumList.remove(index);
-        notifyItemRemoved(index);
+        if (index != -1) {
+            forumList.remove(index);
+            notifyItemRemoved(index);
+        }
+        // Remove from backup list
+        forumListFull.remove(forum);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvDescription;
 
-
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvForumName);
-
             tvDescription = itemView.findViewById(R.id.tvForumDescription);
-
         }
     }
 }

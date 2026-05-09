@@ -3,6 +3,12 @@ package com.ilya.forums;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import java.util.HashMap;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ilya.forums.adapters.CommentAdapter;
 import com.ilya.forums.model.Comment;
 import com.ilya.forums.model.Post;
+import com.ilya.forums.model.User;
 import com.ilya.forums.services.DatabaseService;
 import com.ilya.forums.utils.ImageUtil;
 
@@ -33,10 +40,12 @@ import java.util.Locale;
 
 public class PostViewAfterClick extends AppCompatActivity implements View.OnClickListener {
 
-   DatabaseService databaseService;
     private static final String TAG = "Viewing the post";
 
     CommentAdapter commentAdapter;
+    private FirebaseAuth mAuth;
+    private DatabaseService databaseService;
+
     Button btnBack,btnUp,btnDown,btnGoAddComment;
     ImageView img;
     TextView tvTitle, tvContent,tvForumUser,tvTime,tvNumberOfVotes;
@@ -44,13 +53,14 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
     RecyclerView rvComments;
     ArrayList<Comment> commentArrayList=new ArrayList<>();
 
+    User postCreator, currentUser;
 
     int up,down;
     // 0 = no vote, 1 = upvoted, -1 = downvoted
     int currentVoteState = 0;
 
     Post thePost=null;
-    String forumName;
+    String forumName, userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +76,25 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
         thePost= (Post) goToPostViewing.getSerializableExtra("post");
 
         forumName= goToPostViewing.getStringExtra("forumName");
+
+        mAuth = FirebaseAuth.getInstance();
+        databaseService = DatabaseService.getInstance();
+        userId = mAuth.getCurrentUser().getUid();
+
+
+        databaseService.getUser(userId,  new DatabaseService.DatabaseCallback<User>() {
+            @Override
+            public void onCompleted(User user) {
+
+                currentUser=user;
+
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+
+            }
+        });
 
 
         databaseService=DatabaseService.getInstance();
@@ -93,6 +122,7 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
 
 
         if(thePost!=null) {
+            postCreator=thePost.getUser();
             tvTitle.setText(thePost.getTitle());
             tvContent.setText(thePost.getContent());
             tvForumUser.setText( forumName+ "/" + thePost.getUser().getFname() );
@@ -156,6 +186,12 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
             });
 
         }
+        else {
+            // This will tell you exactly what's wrong in your Logcat
+            Log.e(TAG, "ERROR: Post object was null! Check your Intent keys.");
+            Toast.makeText(this, "Error loading post", Toast.LENGTH_SHORT).show();
+            finish(); // This is why you might be getting sent back
+        }
 
 
 
@@ -192,10 +228,19 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
                 String commentId = databaseService.generateCommentId();
                 Date currentDate= new Date();
                 String postID = thePost.getPostId();
-                Comment newComment = new Comment(commentId,currentDate,commentContent,postID,thePost.getUser());
+                Comment newComment = new Comment(commentId,currentDate,commentContent,postID,currentUser);
                 databaseService.createNewComment(newComment, new DatabaseService.DatabaseCallback<Void>() {
                     @Override
                     public void onCompleted(Void object) {
+                        // נניח ששלפת את יוצר הפוסט (creator) מהדאטה-בייס:
+                        String tokenOfPostOwner = postCreator.getFcmToken();
+                        String myName = currentUser.getFname(); // השם שלך (המגיב)
+
+                        triggerNotification(
+                                tokenOfPostOwner,
+                                "תגובה חדשה!",
+                                myName + " הגיב על הפוסט שלך"
+                        );
 
 
 
@@ -274,5 +319,48 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
         };
 
         }
+    /**
+     * Call this method when a comment is successfully posted.
+     * @param targetToken The FCM token of the user who created the post.
+     * @param title The title of the notification (e.g., "New Comment!")
+     * @param message The body of the notification (e.g., "Ilya replied to your post")
+     */
+    public void sendPushNotification(String targetToken, String title, String message) {
+        if (targetToken == null || targetToken.isEmpty()) {
+            return; // Don't try to send if the user has no token
+        }
 
+        // Create a new request in a "NotificationRequests" node
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("NotificationRequests").push();
+
+        HashMap<String, String> requestData = new HashMap<>();
+        requestData.put("token", targetToken);
+        requestData.put("title", title);
+        requestData.put("message", message);
+
+        // Save it to the database
+        ref.setValue(requestData);
+    }
+    private void triggerNotification(String targetToken, String title, String message) {
+        // בדיקה שיוצר הפוסט אכן מחובר ויש לו טוקן
+        if (targetToken == null || targetToken.isEmpty()) {
+            android.util.Log.w("NOTIF_DEBUG", "Target token is empty, skipping...");
+            return;
+        }
+
+        // התחברות לתיקייה המיוחדת שהשרת מקשיב לה
+        com.google.firebase.database.DatabaseReference ref =
+                com.google.firebase.database.FirebaseDatabase.getInstance()
+                        .getReference("NotificationRequests")
+                        .push(); // יצירת מזהה ייחודי לבקשה
+
+        // הכנת הנתונים עבור השרת
+        java.util.HashMap<String, String> notificationMap = new java.util.HashMap<>();
+        notificationMap.put("token", targetToken);
+        notificationMap.put("title", title);
+        notificationMap.put("message", message);
+
+        // כתיבה ל-DB - ברגע שזה קורה, השרת שוכר העלית שולח את ה-Push!
+        ref.setValue(notificationMap);
+    }
     }

@@ -31,6 +31,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Btnlogin.setOnClickListener(this);
         Btnsignup.setOnClickListener(this);
         Btncreds.setOnClickListener(this);
+        com.google.firebase.messaging.FirebaseMessaging.getInstance().subscribeToTopic("all_users")
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        android.util.Log.d("FCM_TOPIC", "Successfully subscribed to all_users topic!");
+                    } else {
+                        android.util.Log.e("FCM_TOPIC", "Failed to subscribe to topic.", task.getException());
+                    }
+                });
     }
 
     @Override

@@ -18,6 +18,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.ilya.forums.model.Forum;
 import com.ilya.forums.model.Post;
 import com.ilya.forums.model.User;
@@ -25,6 +27,7 @@ import com.ilya.forums.services.DatabaseService;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 public class CreateNewForum extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "Create Forum";
@@ -109,6 +112,12 @@ public class CreateNewForum extends AppCompatActivity implements View.OnClickLis
                 @Override
                 public void onCompleted(Void object) {
 
+                    // בתוך CreateNewForum.java
+                    DatabaseReference globalRef = FirebaseDatabase.getInstance().getReference("GlobalNotifications").push();
+                    HashMap<String, String> data = new HashMap<>();
+                    data.put("title", "פורום חדש נוצר!");
+                    data.put("message", "בואו לראות את הפורום: " + title);
+                    globalRef.setValue(data);
 
 
                 }

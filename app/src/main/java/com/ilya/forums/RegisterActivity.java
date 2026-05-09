@@ -19,6 +19,8 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.ilya.forums.model.User;
 import com.ilya.forums.services.DatabaseService;
+import com.google.firebase.messaging.FirebaseMessaging;
+import android.util.Log;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 

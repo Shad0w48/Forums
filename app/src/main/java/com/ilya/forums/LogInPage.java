@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.ilya.forums.model.User;
+import com.google.firebase.messaging.FirebaseMessaging;
+import android.util.Log;
 import com.ilya.forums.services.DatabaseService;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -108,6 +110,20 @@ public class LogInPage extends AppCompatActivity implements View.OnClickListener
 
                 editor.commit();
 
+                FirebaseMessaging.getInstance().getToken()
+                        .addOnCompleteListener(task -> {
+                            if (!task.isSuccessful()) {
+                                Log.w("FCM_TAG", "Fetching FCM registration token failed", task.getException());
+                                return;
+                            }
+
+                            // 1. Get the new FCM registration token
+                            String token = task.getResult();
+                            Log.d("FCM_TAG", "User's Device Token: " + token);
+
+                            // 2. Save this token to your database
+                            saveTokenToDatabase(uid,token);
+                        });
 
                 Intent mainIntent = new Intent(LogInPage.this, UserMain.class);
                 /// Clear the back stack (clear history) and start the MainActivity
@@ -126,5 +142,20 @@ public class LogInPage extends AppCompatActivity implements View.OnClickListener
                 //SharedPreferencesUtil.signOutUser(LogInPage.this);
             }
         });
+    }
+    private void saveTokenToDatabase(String uid, String token) {
+        // We update just the "fcmToken" field for the specific user who just logged in
+        com.google.firebase.database.FirebaseDatabase.getInstance()
+                .getReference("Users") // Make sure this matches your database node name
+                .child(uid)
+                .child("fcmToken")
+                .setValue(token)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "Token successfully saved to database for user: " + uid);
+                    } else {
+                        Log.e(TAG, "Failed to save token", task.getException());
+                    }
+                });
     }
 }

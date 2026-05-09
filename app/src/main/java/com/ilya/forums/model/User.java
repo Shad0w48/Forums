@@ -4,9 +4,19 @@ import java.io.Serializable;
 
 public class User implements Serializable {
     String id, fname, lname, email, phone, password;
+    private String fcmToken="";
+
+
+
+
     Boolean isAdmin;
+    public String getFcmToken() {
+        return fcmToken;
+    }
 
-
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
 
     public void setAdmin(Boolean admin) {
         isAdmin = admin;
