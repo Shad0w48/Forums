@@ -47,8 +47,8 @@ public class DatabaseService {
     private static final String USERS_PATH = "users",
                                 POSTS_PATH = "forums_posts",
                                 COMMENTS_PATH = "posts_comments",
-                                FORUMS_PATH = "forums";
-
+                                FORUMS_PATH = "forums",
+                                VOTES_PATH = "votes";
     /// callback interface for database operations
     /// @param <T> the type of the object to return
     /// @see DatabaseCallback#onCompleted(Object)
@@ -419,8 +419,9 @@ public class DatabaseService {
     ///              if the operation fails, the callback will receive an exception
     /// @see DatabaseCallback
     /// @see Post
-    public void getPost(@NotNull final String postId, @NotNull final DatabaseCallback<Post> callback) {
-        getData(POSTS_PATH + "/" + postId, Post.class, callback);
+    public void getPost(@NotNull final String forumId, @NotNull final String postId, @NotNull final DatabaseCallback<Post> callback) {
+        // We must match the path used in createNewPost
+        getData(POSTS_PATH + "/" + forumId + "/" + postId, Post.class, callback);
     }
 
     /// get all the posts from the database
@@ -556,5 +557,40 @@ public class DatabaseService {
 
 
     // endregion forum section
+    public void getUserVote(String postId, String userId, final DatabaseCallback<Integer> callback) {
+        // Path: votes/postId/userId
+        DatabaseReference ref = FirebaseDatabase.getInstance()
+                .getReference(VOTES_PATH)
+                .child(postId)
+                .child(userId);
+
+        ref.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Integer value = task.getResult().getValue(Integer.class);
+                // If null, user hasn't voted yet (return 0)
+                callback.onCompleted(value != null ? value : 0);
+            } else {
+                callback.onFailed(task.getException());
+            }
+        });
+    }
+    public void performVote(String postId, String userId, int voteValue, int previousValue, final DatabaseCallback<Void> callback) {
+        if (postId == null || userId == null) {
+            if (callback != null) callback.onFailed(new Exception("Post ID or User ID is null"));
+            return;
+        }
+
+        // Target the specific user's vote record in the "votes" path
+        DatabaseReference userVoteRef = databaseReference.child(VOTES_PATH).child(postId).child(userId);
+
+        // Save the new state (1, -1, or 0) so the app remembers their choice next time
+        userVoteRef.setValue(voteValue)
+                .addOnSuccessListener(aVoid -> {
+                    if (callback != null) callback.onCompleted(null);
+                })
+                .addOnFailureListener(e -> {
+                    if (callback != null) callback.onFailed(e);
+                });
+    }
 
 }

@@ -6,8 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="24dp"
+    android:background="#F8F9FA"
     tools:context=".MainActivity">
 
+    <!-- App Title -->
     <TextView
         android:id="@+id/tvHello"
         android:layout_width="wrap_content"
@@ -16,21 +18,34 @@
         android:text="Forums"
         android:textSize="40sp"
         android:textStyle="bold"
-        android:textColor="@color/black"
+        android:textColor="@android:color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/tvSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Connect, Share, and Discuss"
+        android:textSize="16sp"
+        android:textColor="#5F6368"
+        app:layout_constraintTop_toBottomOf="@id/tvHello"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Logo Section -->
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
         android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvHello"
+        app:layout_constraintTop_toBottomOf="@+id/tvSubtitle"
         app:srcCompat="@drawable/logo100" />
 
+    <!-- Log In: Cyan Button Design -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLogIn"
         android:layout_width="0dp"
@@ -38,35 +53,42 @@
         android:layout_marginTop="48dp"
         android:text="Log In"
         android:textSize="16sp"
+        android:textColor="@android:color/white"
+        app:backgroundTint="#03A9F4"
         app:cornerRadius="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintWidth_percent="0.8" />
+        app:layout_constraintWidth_percent="0.85" />
 
+    <!-- Sign Up: Now Cyan Button Design as well -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSignUp"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginTop="16dp"
         android:text="Sign Up"
         android:textSize="16sp"
+        android:textColor="@android:color/white"
+        app:backgroundTint="#03A9F4"
         app:cornerRadius="12dp"
         app:layout_constraintEnd_toEndOf="@+id/btnLogIn"
         app:layout_constraintStart_toStartOf="@+id/btnLogIn"
         app:layout_constraintTop_toBottomOf="@+id/btnLogIn" />
 
+    <!-- Credits: Styled as the Gray Button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnCreds"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
         android:layout_marginBottom="32dp"
         android:text="View Credits"
-        android:textAllCaps="false"
+        android:textSize="16sp"
+        android:textColor="@android:color/white"
+        app:backgroundTint="#78909C"
+        app:cornerRadius="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="@+id/btnSignUp"
+        app:layout_constraintStart_toStartOf="@+id/btnSignUp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

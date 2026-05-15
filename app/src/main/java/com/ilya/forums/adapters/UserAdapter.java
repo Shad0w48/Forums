@@ -55,6 +55,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             initials += user.getLname().charAt(0);
         }
         holder.tvInitials.setText(initials.toUpperCase());
+        holder.tvName.setText(user.getFname()+" "+user.getLname());
         
         // Show admin chip if user is admin
 //        if (user.getIsAdmin()) {

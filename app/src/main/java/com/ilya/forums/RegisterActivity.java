@@ -27,7 +27,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private static final String TAG = "Register";
     EditText etFname, etLname, etMail, etPhone, etPassword;
     String fName, lName, email, phone, password;
-    Button btnSubmit;
+    Button btnBack,btnSubmit;
     private DatabaseService databaseService;
 
     public static final String MyPreferences="MyPrefs";
@@ -55,6 +55,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         etPassword = findViewById(R.id.etPasswordRegister);
         btnSubmit = findViewById(R.id.btnRegister);
         btnSubmit.setOnClickListener(this);
+        btnBack = findViewById(R.id.btnBackFromReg);
+        btnBack.setOnClickListener(this);
 
     }
 
@@ -76,6 +78,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
             /// Register user
             registerUser(fName, lName, phone, email, password);
+        }
+        if (v.getId() == btnBack.getId()){
+            Intent goBack = new Intent(RegisterActivity.this, MainActivity.class);
+            startActivity(goBack);
         }
     }
 

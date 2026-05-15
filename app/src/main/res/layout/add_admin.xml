@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="24dp">
+    android:padding="24dp"
+    android:background="@android:color/white">
 
     <TextView
         android:id="@+id/tvMakeAdminquestion"
@@ -11,29 +12,44 @@
         android:layout_height="wrap_content"
         android:text="Are you sure you want to make this user admin?"
         android:textSize="18sp"
-        android:textColor="@color/black"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <!-- Cancel Button: Gray Button style -->
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnCancelNewAdmin"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
         android:text="Cancel"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        app:backgroundTint="#78909C"
+        app:cornerRadius="12dp"
         app:layout_constraintEnd_toStartOf="@+id/btnMakeNewAdmin"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvMakeAdminquestion" />
 
-    <Button
+    <!-- Apply Button: Cyan Button style -->
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnMakeNewAdmin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="8dp"
         android:text="Apply"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        app:backgroundTint="#03A9F4"
+        app:cornerRadius="12dp"
         app:layout_constraintBottom_toBottomOf="@+id/btnCancelNewAdmin"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@+id/btnCancelNewAdmin"
         app:layout_constraintTop_toTopOf="@+id/btnCancelNewAdmin" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,15 +6,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
+    android:background="#F8F9FA"
     tools:context=".InsideTheForum">
 
-    <Button
+    <!-- Header Section -->
+    <ImageButton
         android:id="@+id/btnBackFromInsideForum"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="← Back"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Back"
+        android:src="@android:drawable/ic_menu_revert"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="#202124" />
 
     <TextView
         android:id="@+id/tvNameOfChosenForum"
@@ -22,48 +27,76 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:layout_marginEnd="12dp"
-        android:textSize="20sp"
-        android:text=""
-        android:textStyle="bold"
         android:textColor="@android:color/black"
+        android:textSize="22sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/btnBackFromInsideForum"
         app:layout_constraintEnd_toStartOf="@+id/tvDateOfChosenForum"
         app:layout_constraintStart_toEndOf="@+id/btnBackFromInsideForum"
         app:layout_constraintTop_toTopOf="@+id/btnBackFromInsideForum"
-        tools:text="Forum Name" />
+        tools:text="Gaming Forum" />
 
     <TextView
         android:id="@+id/tvDateOfChosenForum"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="#5F6368"
         android:textSize="12sp"
-        android:text=""
         app:layout_constraintBottom_toBottomOf="@+id/tvNameOfChosenForum"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tvNameOfChosenForum"
-        tools:text="Oct 24, 2023" />
+        tools:text="May 14, 2026" />
 
     <TextView
         android:id="@+id/tvDescriptionOfChosenForum"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="12dp"
+        android:textColor="#5F6368"
         android:textSize="14sp"
-        android:text=""
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnBackFromInsideForum"
-        tools:text="This is a description of the forum. It tells you what people are talking about here." />
+        tools:text="Discuss your favorite games and share strategies with the community." />
 
-    <Button
-        android:id="@+id/btnNewPost"
-        android:layout_width="wrap_content"
+    <!-- Search Bar -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layoutSearchPosts"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="+ New Post"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvDescriptionOfChosenForum" />
+        android:layout_marginEnd="8dp"
+        app:hintEnabled="false"
+        app:startIconDrawable="@android:drawable/ic_menu_search"
+        app:layout_constraintEnd_toStartOf="@+id/btnNewPost"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvDescriptionOfChosenForum">
 
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etSearchPosts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Search posts..."
+            android:inputType="text"
+            android:paddingVertical="12dp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- New Post: Cyan Button style (compact version) -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnNewPost"
+        android:layout_width="wrap_content"
+        android:layout_height="55dp"
+        android:text="Post"
+        android:textColor="@android:color/white"
+        app:backgroundTint="#03A9F4"
+        app:cornerRadius="12dp"
+        app:icon="@android:drawable/ic_input_add"
+        app:layout_constraintBottom_toBottomOf="@+id/layoutSearchPosts"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/layoutSearchPosts" />
+
+    <!-- RecyclerView for Posts -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPostOfForum"
         android:layout_width="0dp"
@@ -72,6 +105,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnNewPost" />
+        app:layout_constraintTop_toBottomOf="@+id/layoutSearchPosts"
+        tools:listitem="@layout/item_post" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
