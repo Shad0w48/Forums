@@ -164,7 +164,8 @@ public class InsideTheForum extends AppCompatActivity implements View.OnClickLis
             goAddPost.putExtra("forumId", forumId);
             startActivity(goAddPost);
         } else if (view == btnBack) {
-            finish(); // Use finish() to simply return to the previous screen
+            Intent goB = new Intent(InsideTheForum.this, UserMain.class);
+            startActivity(goB);
         }
     }
 }

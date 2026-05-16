@@ -10,11 +10,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.ilya.forums.R;
 import com.ilya.forums.model.User;
 import com.ilya.forums.services.DatabaseService;
@@ -24,13 +26,15 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
 
     private static final String TAG = "UserProfileActivity";
     private DatabaseService databaseService;
+    private FirebaseAuth mAuth;
+
 
     private EditText etUserFirstName, etUserLastName, etUserEmail, etUserPhone, etUserPassword;
     private TextView tvUserDisplayName, tvUserDisplayEmail;
-    private Button btnUpdateProfile, btnSignOut;
+    private Button btnBack,btnUpdateProfile, btnSignOut;
     private View adminBadge;
-    String selectedUid;
-    User selectedUser;
+    String ownId,selectedUid;
+    User currentUser,selectedUser;
     boolean isCurrentUser = false;
 
     @Override
@@ -44,23 +48,20 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
             return insets;
         });
 
-        databaseService=databaseService.getInstance();
+        databaseService=DatabaseService.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         selectedUid = getIntent().getStringExtra("USER_UID");
-        //User currentUser = SharedPreferencesUtil.getUser(this);
-   //     assert currentUser != null;
+        ownId=getIntent().getStringExtra("Own_USER_UID");
+        databaseService.getUser(ownId, new DatabaseService.DatabaseCallback<User>() {
+            @Override
+            public void onCompleted(User user) {
+                currentUser = user;
+            }
+            @Override
+            public void onFailed(Exception e) {}
+        });
 
-    //    if (selectedUid == null) {
-    //        selectedUid = currentUser.getId();
-     //   }
-     //   isCurrentUser = selectedUid.equals(currentUser.getId());
-     //   if (!currentUser.isAdmin()) {
-            // If the user is not an admin and the selected user is not the current user
-            // then finish the activity
-     //       Toast.makeText(this, "You are not authorized to view this profile", Toast.LENGTH_SHORT).show();
-     //       finish();
-     //       return;
-     //   }
 
         Log.d(TAG, "Selected user: " + selectedUid);
 
@@ -74,14 +75,18 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
         tvUserDisplayEmail = findViewById(R.id.tv_user_display_email);
         btnUpdateProfile = findViewById(R.id.btn_edit_profile);
         btnSignOut = findViewById(R.id.btn_sign_out);
-       //adminBadge = findViewById(R.id.adminBadge);
-
+        btnBack =findViewById(R.id.btn_back_profile);
+        btnBack.setOnClickListener(this);
         btnUpdateProfile.setOnClickListener(this);
         btnSignOut.setOnClickListener(this);
 
-        // if the user is not the current user, hide the sign out button
-        if (!isCurrentUser) {
-            btnSignOut.setVisibility(View.GONE);
+
+        if (ownId != null && ownId.equals(selectedUid)) {
+            isCurrentUser = true; // מעדכנים את המשתנה הלוגי
+            btnSignOut.setVisibility(View.VISIBLE); // מציגים את כפתור היציאה
+        } else {
+            isCurrentUser = false;
+            btnSignOut.setVisibility(View.GONE); // מסתירים לחלוטין אם זה פרופיל של מישהו אחר
         }
 
         showUserProfile();
@@ -94,7 +99,40 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
             return;
         }
         if(v.getId() == R.id.btn_sign_out) {
-   //         signOut();
+            // ניפוח ה-View מה-XML שייצרנו
+            View dialogView = getLayoutInflater().inflate(R.layout.dialog_sign_out, null);
+            AlertDialog dialog = new AlertDialog.Builder(UserProfileActivity.this)
+                    .setView(dialogView)
+                    .create();
+
+// הגדרת רקע שקוף כדי שהפינות המעוגלות של ה-Card/Pill שלך יעבדו יפה
+            if (dialog.getWindow() != null) {
+                dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+            }
+
+// קישור הכפתורים מתוך ה-dialogView
+            Button btnYes = dialogView.findViewById(R.id.btnSignOutYes);
+            Button btnNo = dialogView.findViewById(R.id.btnSignOutNo);
+
+// לחיצה על YES - מתנתקים ועוברים ל-Login
+            // לחיצה על YES - משנים את שם המשתנה ל-view
+            btnYes.setOnClickListener(view -> {
+                com.google.firebase.auth.FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(UserProfileActivity.this, LogInPage.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                dialog.dismiss();
+            });
+
+// לחיצה על NO - משנים את שם המשתנה ל-view
+            btnNo.setOnClickListener(view -> dialog.dismiss());
+
+// הצגת הדיאלוג על המסך
+            dialog.show();
+        }
+
+        if(v==btnBack){
+            finish();
         }
     }
 

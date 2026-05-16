@@ -28,6 +28,7 @@ public class UsersListActivity extends AppCompatActivity {
     private UserAdapter userAdapter;
     private TextView tvUserCount;
     private DatabaseService databaseService;
+    String ownId;
 
 
     @Override
@@ -43,6 +44,7 @@ public class UsersListActivity extends AppCompatActivity {
 
 
         databaseService=DatabaseService.getInstance();
+        ownId=getIntent().getStringExtra("Own_USER_UID");
         RecyclerView usersList = findViewById(R.id.rv_users_list);
         tvUserCount = findViewById(R.id.tv_user_count);
         usersList.setLayoutManager(new LinearLayoutManager(this));
@@ -53,6 +55,7 @@ public class UsersListActivity extends AppCompatActivity {
                 Log.d(TAG, "User clicked: " + user);
                 Intent intent = new Intent(UsersListActivity.this, UserProfileActivity.class);
                 intent.putExtra("USER_UID", user.getId());
+                intent.putExtra("Own_USER_UID",ownId);
                 startActivity(intent);
             }
 

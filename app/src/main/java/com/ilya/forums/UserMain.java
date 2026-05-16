@@ -177,11 +177,13 @@ public class  UserMain extends AppCompatActivity implements View.OnClickListener
     public void onClick(View v) {
         if(v==btnToAdminPage){
             Intent go = new Intent(this, AdminActivity.class);
+            go.putExtra("Own_USER_UID",userId);
             startActivity(go);
         }
         if(v==btnGoToEdit){
             Intent goEdit = new Intent(this, UserProfileActivity.class);
             goEdit.putExtra("USER_UID",userId);
+            goEdit.putExtra("Own_USER_UID",userId);
             startActivity(goEdit);
         }
     }

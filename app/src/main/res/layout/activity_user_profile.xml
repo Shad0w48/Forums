@@ -155,12 +155,23 @@
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <!-- Save Profile: Cyan Button style -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_back_profile"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:text="Go Back"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            app:backgroundTint="#78909C"
+            app:cornerRadius="12dp" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_edit_profile"
             android:layout_width="0dp"
             android:layout_height="60dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="0dp"
             android:layout_weight="1"
             android:text="Save Profile"
             android:textColor="@android:color/white"
@@ -168,18 +179,15 @@
             app:backgroundTint="#03A9F4"
             app:cornerRadius="12dp" />
 
-        <!-- Sign Out: Kept as Outlined Red Button -->
-        <!-- android:visibility="gone" ensures it is hidden until your code verifies the user -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_sign_out"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_marginStart="8dp"
-            android:layout_weight="1"
             android:text="Sign Out"
             android:textColor="#D32F2F"
-            android:visibility="gone"
+            android:visibility="invisible"
             app:cornerRadius="12dp"
             app:strokeColor="#D32F2F"
             tools:visibility="visible" />

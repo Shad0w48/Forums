@@ -16,6 +16,7 @@ import com.ilya.forums.model.User;
 public class AdminActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button btnBack,btnAddForum, btnUserManage, btnAddAdmin;
+    String ownId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +35,8 @@ public class AdminActivity extends AppCompatActivity implements View.OnClickList
         btnUserManage.setOnClickListener(this);
         btnBack=findViewById(R.id.btnBackFromAdmin);
         btnBack.setOnClickListener(this);
+        ownId=getIntent().getStringExtra("Own_USER_UID");
+
     }
 
     @Override
@@ -44,6 +47,7 @@ public class AdminActivity extends AppCompatActivity implements View.OnClickList
         }
         if(v==btnUserManage){
             Intent goUL=new Intent(this,UsersListActivity.class);
+            goUL.putExtra("Own_USER_UID",ownId);
             startActivity(goUL);
         }
         if(v==btnAddAdmin){

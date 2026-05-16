@@ -78,6 +78,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
             /// Register user
             registerUser(fName, lName, phone, email, password);
+            Intent goLog = new Intent(RegisterActivity.this, LogInPage.class);
+            startActivity(goLog);
         }
         if (v.getId() == btnBack.getId()){
             Intent goBack = new Intent(RegisterActivity.this, MainActivity.class);
