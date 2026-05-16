@@ -4,31 +4,48 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
+    <!-- כפתור חזור -->
+    <ImageButton
+        android:id="@+id/btn_back_users"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Back"
+        android:src="@android:drawable/ic_menu_revert"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="#202124" />
+
+    <!-- כותרת כמות המשתמשים (מיושרת למרכז האנכי של הכפתור כדי למנוע גלישה) -->
     <TextView
         android:id="@+id/tv_user_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="21dp"
-        android:layout_marginBottom="1dp"
         android:text="TextView"
-        app:layout_constraintBottom_toTopOf="@+id/rv_users_list"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_back_users"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/btn_back_users" />
 
+    <!-- רשימת המשתמשים - מתחילה כעת בבטחה מתחת לכפתור/כותרת -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_users_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="12dp"
         android:layout_marginStart="1dp"
         android:layout_marginEnd="1dp"
         android:layout_marginBottom="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_user_count"
+        app:layout_constraintTop_toBottomOf="@+id/btn_back_users"
         tools:listitem="@layout/item_user" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

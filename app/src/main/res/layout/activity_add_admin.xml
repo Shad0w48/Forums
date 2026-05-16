@@ -7,6 +7,19 @@
     android:layout_height="match_parent"
     tools:context=".AddAdminActivity">
 
+    <!-- כפתור חזור -->
+    <ImageButton
+        android:id="@+id/btn_back_addAdmin"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Back"
+        android:src="@android:drawable/ic_menu_revert"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="#202124" />
     <TextView
         android:id="@+id/tvAddAdminTitle"
         android:layout_width="wrap_content"

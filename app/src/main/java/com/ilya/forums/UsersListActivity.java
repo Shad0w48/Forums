@@ -13,6 +13,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.ilya.forums.R;
@@ -66,6 +70,13 @@ public class UsersListActivity extends AppCompatActivity {
             }
         });
         usersList.setAdapter(userAdapter);
+        ImageButton btnBack = findViewById(R.id.btn_back_users);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish(); // סוגר את המסך הנוכחי ומחזיר למסך הניהול
+            }
+        });
     }
 
 

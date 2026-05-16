@@ -1,8 +1,11 @@
 package com.ilya.forums;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -11,11 +14,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -28,6 +33,7 @@ import com.ilya.forums.services.DatabaseService;
 import com.ilya.forums.utils.ImageUtil;
 
 import java.util.Date;
+import java.util.Map;
 
 public class CreateNewPost extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "Create Post";
@@ -43,7 +49,6 @@ public class CreateNewPost extends AppCompatActivity implements View.OnClickList
     private MaterialButton btnRemovePhoto;
     private ImageView imgNewPost;
 
-    // Step 4 variable: Keep track if the user actually selected an image
     private boolean isImageSelected = false;
 
     private Button btnBack;
@@ -52,13 +57,18 @@ public class CreateNewPost extends AppCompatActivity implements View.OnClickList
 
     private ActivityResultLauncher<Intent> captureImageLauncher;
 
+    // רכיב חדש לבקשת הרשאות מרובות
+    private ActivityResultLauncher<String[]> permissionLauncher;
+
+    // משתנה עזר שיזכור איזו פעולה המשתמש רצה לבצע לפני שביקשנו הרשאה
+    private String pendingAction = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_create_new_post);
 
-        // Standard setup
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -79,7 +89,7 @@ public class CreateNewPost extends AppCompatActivity implements View.OnClickList
         btnTakePic = findViewById(R.id.btnTakePic);
         imgNewPost = findViewById(R.id.imgNewPost);
         btnRemovePhoto = findViewById(R.id.btnRemovePhoto);
-        btnBack = findViewById(R.id.btnback6); // Make sure this matches your XML ID
+        btnBack = findViewById(R.id.btnback6);
 
         // Click Listeners
         btnAddPost.setOnClickListener(this);
@@ -88,14 +98,38 @@ public class CreateNewPost extends AppCompatActivity implements View.OnClickList
         btnBack.setOnClickListener(this);
         btnRemovePhoto.setOnClickListener(v -> removeSelectedImage());
 
-        // Step 3 (Camera): Update UI state after photo is taken
+        // רישום ה-Launcher לטיפול בתשובת ההרשאות של המשתמש
+        permissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestMultiplePermissions(),
+                result -> {
+                    boolean cameraGranted = result.getOrDefault(Manifest.permission.CAMERA, false);
+                    boolean storageGranted;
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        storageGranted = result.getOrDefault(Manifest.permission.READ_MEDIA_IMAGES, false);
+                    } else {
+                        storageGranted = result.getOrDefault(Manifest.permission.READ_EXTERNAL_STORAGE, false);
+                    }
+
+                    // בדיקה מה המשתמש ביקש ואיזה אישור התקבל
+                    if (pendingAction.equals("CAMERA") && cameraGranted) {
+                        captureImageFromCameraDirect();
+                    } else if (pendingAction.equals("GALLERY") && storageGranted) {
+                        selectImageFromGalleryDirect();
+                    } else {
+                        Toast.makeText(this, "יש לאשר את ההרשאה המתאימה כדי להשתמש ברכיב המדיה", Toast.LENGTH_SHORT).show();
+                    }
+                    pendingAction = ""; // איפוס הפעולה הממתינה
+                });
+
+        // Camera Launcher הקיים שלך
         captureImageLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                         Bitmap bitmap = (Bitmap) result.getData().getExtras().get("data");
                         imgNewPost.setImageBitmap(bitmap);
-                        applySelectedImageState(); // Switch UI from placeholder to real image
+                        applySelectedImageState();
                     }
                 });
 
@@ -120,12 +154,12 @@ public class CreateNewPost extends AppCompatActivity implements View.OnClickList
         }
 
         if (v == btnGallery) {
-            selectImageFromGallery();
+            checkStoragePermissionAndOpenGallery();
             return;
         }
 
         if (v == btnTakePic) {
-            captureImageFromCamera();
+            checkCameraPermissionAndCapture();
             return;
         }
 
@@ -138,7 +172,6 @@ public class CreateNewPost extends AppCompatActivity implements View.OnClickList
         title = etPostTitle.getText().toString();
         description = etPostInfo.getText().toString();
 
-        // Step 4 logic: Only convert image if one was actually selected
         String imagePic = "";
         if (isImageSelected) {
             imagePic = ImageUtil.convertTo64Base(imgNewPost);
@@ -161,30 +194,56 @@ public class CreateNewPost extends AppCompatActivity implements View.OnClickList
         });
     }
 
-    // Step 3 logic: Make the image look "real" and show remove button
     private void applySelectedImageState() {
         isImageSelected = true;
-        imgNewPost.setAlpha(1.0f); // Solid photo
-        imgNewPost.setScaleType(ImageView.ScaleType.CENTER_CROP); // Fill the box
+        imgNewPost.setAlpha(1.0f);
+        imgNewPost.setScaleType(ImageView.ScaleType.CENTER_CROP);
         btnRemovePhoto.setVisibility(View.VISIBLE);
     }
 
     private void removeSelectedImage() {
         isImageSelected = false;
-        imgNewPost.setImageResource(R.drawable.logo100); // Placeholder
-        imgNewPost.setAlpha(0.4f); // Watermark style
+        imgNewPost.setImageResource(R.drawable.logo100);
+        imgNewPost.setAlpha(0.4f);
         imgNewPost.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         btnRemovePhoto.setVisibility(View.GONE);
     }
 
-    private void selectImageFromGallery() {
+    // --- ניהול הרשאות ופתיחת מדיה מעודכן ---
+
+    private void checkStoragePermissionAndOpenGallery() {
+        String permission;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permission = Manifest.permission.READ_MEDIA_IMAGES;
+        } else {
+            permission = Manifest.permission.READ_EXTERNAL_STORAGE;
+        }
+
+        if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
+            selectImageFromGalleryDirect();
+        } else {
+            pendingAction = "GALLERY";
+            permissionLauncher.launch(new String[]{permission});
+        }
+    }
+
+    private void checkCameraPermissionAndCapture() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            captureImageFromCameraDirect();
+        } else {
+            pendingAction = "CAMERA";
+            permissionLauncher.launch(new String[]{Manifest.permission.CAMERA});
+        }
+    }
+
+    private void selectImageFromGalleryDirect() {
         Intent i = new Intent();
         i.setType("image/*");
         i.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(i, "Select Picture"), SELECT_PICTURE);
     }
 
-    private void captureImageFromCamera() {
+    private void captureImageFromCameraDirect() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         captureImageLauncher.launch(takePictureIntent);
     }
@@ -196,7 +255,7 @@ public class CreateNewPost extends AppCompatActivity implements View.OnClickList
             Uri selectedImageUri = data.getData();
             if (selectedImageUri != null) {
                 imgNewPost.setImageURI(selectedImageUri);
-                applySelectedImageState(); // Step 3 Switch
+                applySelectedImageState();
             }
         }
     }

@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,6 +60,13 @@ public class AddAdminActivity extends AppCompatActivity {
             }
         });
         usersList.setAdapter(userAdapter);
+        ImageButton btnBack = findViewById(R.id.btn_back_addAdmin);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish(); // סוגר את המסך הנוכחי ומחזיר למסך הניהול
+            }
+        });
     }
 
     private void showMakeAdminDialog(User user) {
