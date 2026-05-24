@@ -59,6 +59,7 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
 
     private RecyclerView rvComments;
     private User postCreator, currentUser;
+    private ArrayList<Comment> commentList;
 
     // Logic Variables
     private int up, down;
@@ -106,6 +107,9 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
 
         rvComments = findViewById(R.id.rvPostComment);
         rvComments.setLayoutManager(new LinearLayoutManager(this));
+        commentList = new ArrayList<>();
+        commentAdapter = new CommentAdapter(commentList);
+        rvComments.setAdapter(commentAdapter);
 
         // 4. Listeners
         btnBack.setOnClickListener(this);
@@ -222,8 +226,9 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
             @Override
             public void onCompleted(List<Comment> comments) {
                 if (comments != null) {
-                    commentAdapter = new CommentAdapter(new ArrayList<>(comments));
-                    rvComments.setAdapter(commentAdapter);
+                    commentList.clear();          // מנקים את הרשימה הקודמת
+                    commentList.addAll(comments); // מוסיפים את התגובות שהגיעו מהשרת
+                    commentAdapter.notifyDataSetChanged(); // <--- מודיעים לאדפטר להתעדכן!
                 }
             }
             @Override
@@ -408,14 +413,31 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
         EditText etContent = dialogView.findViewById(R.id.etCommentContent);
         dialogView.findViewById(R.id.btnAddTheComment).setOnClickListener(v -> {
             String content = etContent.getText().toString();
+
+            // יצירת אובייקט התגובה החדשה
             Comment newComment = new Comment(databaseService.generateCommentId(), new Date(), content, thePost.getPostId(), currentUser);
+
             databaseService.createNewComment(newComment, new DatabaseService.DatabaseCallback<Void>() {
                 @Override
                 public void onCompleted(Void object) {
-                    if (postCreator != null) triggerNotification(postCreator.getFcmToken(), "New Reply!", currentUser.getFname() + " replied to your post");
+
+                    // 1. מוסיפים את התגובה החדשה לרשימה המקומית בזיכרון של המכשיר
+                    commentList.add(newComment);
+
+                    // 2. מעדכנים את האדפטר שהזיכרון השתנה כדי שיציג אותה מיד על המסך
+                    commentAdapter.notifyDataSetChanged();
+
+
+
+                    // קוד ההתראה המקורי שלך
+                    if (postCreator != null) {
+                        triggerNotification(postCreator.getFcmToken(), "New Reply!", currentUser.getFname() + " replied to your post");
+                    }
                 }
                 @Override
-                public void onFailed(Exception e) {}
+                public void onFailed(Exception e) {
+                    Toast.makeText(PostViewAfterClick.this, "Failed to add comment", Toast.LENGTH_SHORT).show();
+                }
             });
             dialog.dismiss();
         });
