@@ -116,17 +116,51 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
         createNotificationChannel();
 
         if (thePost != null) {
-            // Load persistent vote state for THIS user
-            databaseService.getUserVote(thePost.getPostId(), userId, new DatabaseService.DatabaseCallback<Integer>() {
-                @Override
-                public void onCompleted(Integer voteValue) {
-                    currentVoteState = voteValue;
-                    initialVoteState = voteValue; // Set baseline reference state
-                    updateVoteUI();
-                }
-                @Override
-                public void onFailed(Exception e) { Log.e(TAG, "Vote load failed", e); }
-            });
+            // 1. CACHE THE POST ID SAFELY SO IT CAN NEVER BECOME NULL FROM FIREBASE PARSING
+            final String safePostId = thePost.getPostId();
+
+            // Initial display from intent data
+            displayPostData();
+
+            // Determine the correct forum path safely
+            String targetForumKey = thePost.getForumId();
+            if (targetForumKey == null || targetForumKey.trim().isEmpty()) {
+                targetForumKey = forumName;
+            }
+
+            if (targetForumKey != null && !targetForumKey.trim().isEmpty() && safePostId != null) {
+                databaseService.getPost(targetForumKey, safePostId, new DatabaseService.DatabaseCallback<Post>() {
+                    @Override
+                    public void onCompleted(Post updatedPost) {
+                        if (updatedPost != null) {
+                            thePost = updatedPost;
+
+                            // Fallback to preserve the ID if Firebase returns it empty
+                            if (thePost.getPostId() == null) {
+                                thePost.setPostId(safePostId);
+                            }
+
+                            up = updatedPost.getUpVote();
+                            down = updatedPost.getDownVote();
+                            updateVoteText();
+                        }
+
+                        // 2. USE THE SAFE LOCAL CACHED ID HERE
+                        databaseService.getUserVote(safePostId, userId, new DatabaseService.DatabaseCallback<Integer>() {
+                            @Override
+                            public void onCompleted(Integer voteValue) {
+                                currentVoteState = voteValue;
+                                initialVoteState = voteValue;
+                                updateVoteUI();
+                            }
+                            @Override
+                            public void onFailed(Exception e) { Log.e(TAG, "Vote load failed", e); }
+                        });
+                    }
+                    @Override
+                    public void onFailed(Exception e) { Log.e(TAG, "Post refresh failed", e); }
+                });
+            }
 
             // Load user profile
             databaseService.getUser(userId, new DatabaseService.DatabaseCallback<User>() {
@@ -136,11 +170,6 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
                 public void onFailed(Exception e) {}
             });
 
-            // Initial display from Intent data
-            displayPostData();
-
-            // Immediately sync with server to ensure count is accurate
-            refreshPostDataFromServer();
         } else {
             Toast.makeText(this, "Error: Post data missing", Toast.LENGTH_SHORT).show();
             finish();
@@ -219,7 +248,10 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if (id == R.id.btnViewingBackToMain) finish();
+        if (id == R.id.btnViewingBackToMain) {
+            // Instead of calling finish(), trigger the back dispatcher safely
+            getOnBackPressedDispatcher().onBackPressed();
+        }
         else if (id == R.id.btnPostUpVote) handleUpvote();
         else if (id == R.id.btnPostDownVote) handleDownvote();
         else if (id == R.id.btnGOAddComment) showAddCommentDialog();
@@ -290,15 +322,15 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
             targetForumKey = forumName;
         }
 
-        // 4. WRITE THE GLOBAL COUNTS TO FIREBASE
+        // 4. WRITE THE GLOBAL COUNTS TO FIREBASE (FIXED PATH MISMATH)
         if (targetForumKey != null && !targetForumKey.trim().isEmpty()) {
             DatabaseReference postRef = FirebaseDatabase.getInstance()
-                    .getReference("Forums")
+                    .getReference("forums_posts") // <--- CHANGED FROM "Forums" TO "forums_posts"
                     .child(targetForumKey)
-                    .child("posts")
+                    // .child("posts") <-- REMOVE THIS (DatabaseService doesn't use a nested "posts" folder)
                     .child(thePost.getPostId());
 
-            // Overwrite the old zeros with the actual math
+            // Overwrite the database counts with the actual math
             postRef.child("upVote").setValue(up);
             postRef.child("downVote").setValue(down);
         } else {
