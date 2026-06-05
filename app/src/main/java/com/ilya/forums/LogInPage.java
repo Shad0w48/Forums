@@ -82,7 +82,8 @@ public class LogInPage extends AppCompatActivity implements View.OnClickListener
             startActivity(registerIntent);
         } else if (id == R.id.btnBackFromLogin) {
             // Go back to MainActivity
-            finish();
+            Intent main = new Intent(LogInPage.this, MainActivity.class);
+            startActivity(main);
         }
     }
 

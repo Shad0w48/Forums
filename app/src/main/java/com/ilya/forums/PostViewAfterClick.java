@@ -52,7 +52,7 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
     // UI Elements
     private ImageButton btnBack;
     private MaterialButton btnGoAddComment;
-    private com.google.android.material.button.MaterialButton btnUp, btnDown;
+    private ImageButton btnUp, btnDown;
     private ImageView img;
     private MaterialCardView cardPostImage;
     private TextView tvTitle, tvContent, tvForumUser, tvTime, tvNumberOfVotes;
@@ -120,17 +120,14 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
         createNotificationChannel();
 
         if (thePost != null) {
-            // 1. CACHE THE POST ID SAFELY SO IT CAN NEVER BECOME NULL FROM FIREBASE PARSING
+            // 1. CACHE THE POST ID SAFELY
             final String safePostId = thePost.getPostId();
 
             // Initial display from intent data
             displayPostData();
 
-            // Determine the correct forum path safely
+            // FIX #1: Strictly use ONLY the real Forum ID. No more fallback to forumName!
             String targetForumKey = thePost.getForumId();
-            if (targetForumKey == null || targetForumKey.trim().isEmpty()) {
-                targetForumKey = forumName;
-            }
 
             if (targetForumKey != null && !targetForumKey.trim().isEmpty() && safePostId != null) {
                 databaseService.getPost(targetForumKey, safePostId, new DatabaseService.DatabaseCallback<Post>() {
@@ -139,7 +136,6 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
                         if (updatedPost != null) {
                             thePost = updatedPost;
 
-                            // Fallback to preserve the ID if Firebase returns it empty
                             if (thePost.getPostId() == null) {
                                 thePost.setPostId(safePostId);
                             }
@@ -149,7 +145,6 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
                             updateVoteText();
                         }
 
-                        // 2. USE THE SAFE LOCAL CACHED ID HERE
                         databaseService.getUserVote(safePostId, userId, new DatabaseService.DatabaseCallback<Integer>() {
                             @Override
                             public void onCompleted(Integer voteValue) {
@@ -179,14 +174,11 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
             finish();
         }
 
-        // 5. Handle Back Navigation safely for Android 13+ gestures
+        // 5. Handle Back Navigation safely
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                // 1. Run your custom database synchronization code
                 syncVoteToFirebase();
-
-                // 2. Disable this callback and trigger the system back behavior to actually close the activity
                 setEnabled(false);
                 getOnBackPressedDispatcher().onBackPressed();
             }
@@ -208,7 +200,6 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
         down = thePost.getDownVote();
         updateVoteText();
 
-        // Image Handling
         String base64String = thePost.getPostPic();
         if (base64String != null && !base64String.trim().isEmpty()) {
             try {
@@ -226,9 +217,9 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
             @Override
             public void onCompleted(List<Comment> comments) {
                 if (comments != null) {
-                    commentList.clear();          // מנקים את הרשימה הקודמת
-                    commentList.addAll(comments); // מוסיפים את התגובות שהגיעו מהשרת
-                    commentAdapter.notifyDataSetChanged(); // <--- מודיעים לאדפטר להתעדכן!
+                    commentList.clear();
+                    commentList.addAll(comments);
+                    commentAdapter.notifyDataSetChanged();
                 }
             }
             @Override
@@ -242,19 +233,20 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
     }
 
     private void updateVoteUI() {
-        // Reset to standard gray
-        btnUp.setTextColor(Color.parseColor("#5F6368"));
-        btnDown.setTextColor(Color.parseColor("#5F6368"));
+        btnUp.setColorFilter(Color.parseColor("#5F6368"));
+        btnDown.setColorFilter(Color.parseColor("#5F6368"));
 
-        if (currentVoteState == 1) btnUp.setTextColor(Color.parseColor("#03A9F4"));      // Cyan
-        else if (currentVoteState == -1) btnDown.setTextColor(Color.parseColor("#F44336")); // Red
+        if (currentVoteState == 1) {
+            btnUp.setColorFilter(Color.parseColor("#03A9F4"));
+        } else if (currentVoteState == -1) {
+            btnDown.setColorFilter(Color.parseColor("#F44336"));
+        }
     }
 
     @Override
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.btnViewingBackToMain) {
-            // Instead of calling finish(), trigger the back dispatcher safely
             getOnBackPressedDispatcher().onBackPressed();
         }
         else if (id == R.id.btnPostUpVote) handleUpvote();
@@ -263,86 +255,66 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
     }
 
     private void handleUpvote() {
-        // 1. Revert previous calculations locally on click
         if (currentVoteState == 1) {
-            up--; // Cancel upvote
+            up--;
             currentVoteState = 0;
         } else if (currentVoteState == -1) {
-            down--; // Cancel downvote
-            up++;   // Switch to upvote
+            down--;
+            up++;
             currentVoteState = 1;
         } else {
-            up++;   // Brand new upvote
+            up++;
             currentVoteState = 1;
         }
 
-        // 2. State delta tracking
         isDataChanged = (currentVoteState != initialVoteState);
-
-        // 3. Instant UI feedback updates
         updateVoteUI();
         updateVoteText();
     }
 
     private void handleDownvote() {
-        // 1. Revert previous calculations locally on click
         if (currentVoteState == -1) {
-            down--; // Cancel downvote
+            down--;
             currentVoteState = 0;
         } else if (currentVoteState == 1) {
-            up--;   // Cancel upvote
-            down++; // Switch to downvote
+            up--;
+            down++;
             currentVoteState = -1;
         } else {
-            down++; // Brand new downvote
+            down++;
             currentVoteState = -1;
         }
 
-        // 2. State delta tracking
         isDataChanged = (currentVoteState != initialVoteState);
-
-        // 3. Instant UI feedback updates
         updateVoteUI();
         updateVoteText();
     }
 
     private void syncVoteToFirebase() {
-        // 1. Guard check: only sync if the user actually clicked a button
         if (!isDataChanged || thePost == null || thePost.getPostId() == null) {
             return;
         }
 
-        Log.d(TAG, "Exiting post: Syncing final vote state to Firebase. Final State = " + currentVoteState);
-
-        // Reset flag so we don't accidentally send double requests
         isDataChanged = false;
 
-        // 2. Update the local post object so memory is accurate
         thePost.setUpVote(up);
         thePost.setDownVote(down);
 
-        // 3. Determine the correct Firebase path safely without crashing
+        // FIX #2: Strictly use ONLY the real Forum ID.
         String targetForumKey = thePost.getForumId();
-        if (targetForumKey == null || targetForumKey.trim().isEmpty()) {
-            targetForumKey = forumName;
-        }
 
-        // 4. WRITE THE GLOBAL COUNTS TO FIREBASE (FIXED PATH MISMATH)
         if (targetForumKey != null && !targetForumKey.trim().isEmpty()) {
             DatabaseReference postRef = FirebaseDatabase.getInstance()
-                    .getReference("forums_posts") // <--- CHANGED FROM "Forums" TO "forums_posts"
+                    .getReference("forums_posts")
                     .child(targetForumKey)
-                    // .child("posts") <-- REMOVE THIS (DatabaseService doesn't use a nested "posts" folder)
                     .child(thePost.getPostId());
 
-            // Overwrite the database counts with the actual math
             postRef.child("upVote").setValue(up);
             postRef.child("downVote").setValue(down);
         } else {
-            Log.e(TAG, "Could not save global vote counts: Missing Forum Key.");
+            Log.e(TAG, "Could not save global vote counts: Missing Forum ID. Skipping ghost folder creation.");
         }
 
-        // 5. Save the user's personal button state (Blue/Red/Gray)
         databaseService.performVote(
                 thePost.getPostId(),
                 userId,
@@ -353,30 +325,21 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
                     public void onCompleted(Void object) {
                         initialVoteState = currentVoteState;
                     }
-
                     @Override
-                    public void onFailed(Exception e) {
-                        Log.e(TAG, "Delayed sync failed", e);
-                    }
+                    public void onFailed(Exception e) {}
                 }
         );
     }
 
-    // ... Keep your onBackPressed() and onStop() exactly as they are here ...
-
     private void refreshPostDataFromServer() {
-        // 1. DETERMINE THE CORRECT PATH SAFELY (Same fix we applied to the sync!)
+        // FIX #3: Strictly use ONLY the real Forum ID.
         String targetForumKey = thePost.getForumId();
-        if (targetForumKey == null || targetForumKey.trim().isEmpty()) {
-            targetForumKey = forumName;
-        }
 
         if (targetForumKey == null || targetForumKey.trim().isEmpty()) {
-            Log.e(TAG, "Cannot refresh post: both forumId and forumName are missing.");
+            Log.e(TAG, "Cannot refresh post: forumId is missing.");
             return;
         }
 
-        // 2. FETCH THE FRESH DATA
         databaseService.getPost(targetForumKey, thePost.getPostId(), new DatabaseService.DatabaseCallback<Post>() {
             @Override
             public void onCompleted(Post updatedPost) {
@@ -384,23 +347,18 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
                     thePost = updatedPost;
                     up = updatedPost.getUpVote();
                     down = updatedPost.getDownVote();
-
-                    // 3. THIS IS THE MAGIC: It will instantly overwrite the stale '0' with the real database total!
                     updateVoteText();
                 }
             }
             @Override
-            public void onFailed(Exception e) {
-                Log.e(TAG, "Refresh failed", e);
-            }
+            public void onFailed(Exception e) {}
         });
     }
-
 
     @Override
     protected void onStop() {
         super.onStop();
-        syncVoteToFirebase(); // Failsafe fallback if the app gets minimized or closed directly
+        syncVoteToFirebase();
     }
 
     private void showAddCommentDialog() {
@@ -414,22 +372,30 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
         dialogView.findViewById(R.id.btnAddTheComment).setOnClickListener(v -> {
             String content = etContent.getText().toString();
 
-            // יצירת אובייקט התגובה החדשה
             Comment newComment = new Comment(databaseService.generateCommentId(), new Date(), content, thePost.getPostId(), currentUser);
 
             databaseService.createNewComment(newComment, new DatabaseService.DatabaseCallback<Void>() {
                 @Override
                 public void onCompleted(Void object) {
 
-                    // 1. מוסיפים את התגובה החדשה לרשימה המקומית בזיכרון של המכשיר
                     commentList.add(newComment);
-
-                    // 2. מעדכנים את האדפטר שהזיכרון השתנה כדי שיציג אותה מיד על המסך
                     commentAdapter.notifyDataSetChanged();
 
+                    // FIX #4: Strictly use ONLY the real Forum ID.
+                    String targetForumKey = thePost.getForumId();
 
+                    if (targetForumKey != null && !targetForumKey.trim().isEmpty()) {
+                        DatabaseReference postRef = FirebaseDatabase.getInstance()
+                                .getReference("forums_posts")
+                                .child(targetForumKey)
+                                .child(thePost.getPostId());
 
-                    // קוד ההתראה המקורי שלך
+                        postRef.child("commentCount").setValue(com.google.firebase.database.ServerValue.increment(1));
+                        thePost.setCommentCount(thePost.getCommentCount() + 1);
+                    } else {
+                        Log.e(TAG, "Cannot increment comment count: Missing Forum ID. Skipping ghost folder creation.");
+                    }
+
                     if (postCreator != null) {
                         triggerNotification(postCreator.getFcmToken(), "New Reply!", currentUser.getFname() + " replied to your post");
                     }

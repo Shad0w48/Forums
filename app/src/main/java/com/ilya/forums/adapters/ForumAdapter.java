@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.chip.Chip;
 import com.ilya.forums.R;
 import com.ilya.forums.model.Forum;
 
@@ -24,18 +23,18 @@ public class ForumAdapter extends RecyclerView.Adapter<ForumAdapter.ViewHolder> 
     }
 
     private final List<Forum> forumList;
-    private List<Forum> forumListFull; // Added: Backup list for filtering
+    private List<Forum> forumListFull;
     private final ForumAdapter.OnForumClickListener onForumClickListener;
 
     public ForumAdapter(@Nullable final ForumAdapter.OnForumClickListener onForumClickListener) {
         forumList = new ArrayList<>();
-        forumListFull = new ArrayList<>(); // Initialize backup
+        forumListFull = new ArrayList<>();
         this.onForumClickListener = onForumClickListener;
     }
 
     public ForumAdapter(List<Forum> forumList, OnForumClickListener onForumClickListener) {
         this.forumList = forumList;
-        this.forumListFull = new ArrayList<>(forumList); // Copy initial data to backup
+        this.forumListFull = new ArrayList<>(forumList);
         this.onForumClickListener = onForumClickListener;
     }
 
@@ -54,22 +53,9 @@ public class ForumAdapter extends RecyclerView.Adapter<ForumAdapter.ViewHolder> 
         holder.tvName.setText(forum.getName());
         holder.tvDescription.setText(forum.getDescription());
 
-        // Set initials
-        String initials = "";
-        if (forum.getName() != null && !forum.getName().isEmpty()) {
-            initials += forum.getName().charAt(0);
-        }
-        if (forum.getDescription() != null && !forum.getDescription().isEmpty()) {
-            initials += forum.getDescription().charAt(0);
-        }
-
-        // Show admin chip if forum is admin
-//        if (forum.getIsAdmin()) {
-//            holder.chipRole.setVisibility(View.VISIBLE);
-//            holder.chipRole.setText("Admin");
-//        } else {
-//            holder.chipRole.setVisibility(View.GONE);
-//        }
+        // NEW: Set the post count
+        // We will add getPostCount() to your Forum model in Step 2!
+        holder.tvPostCount.setText(forum.getPostCount() + " posts");
 
         holder.itemView.setOnClickListener(v -> {
             if (onForumClickListener != null) {
@@ -90,7 +76,6 @@ public class ForumAdapter extends RecyclerView.Adapter<ForumAdapter.ViewHolder> 
         return forumList.size();
     }
 
-    // Added: Core filter logic for the search bar
     public void filter(String text) {
         forumList.clear();
         if (text.isEmpty()) {
@@ -109,24 +94,22 @@ public class ForumAdapter extends RecyclerView.Adapter<ForumAdapter.ViewHolder> 
     public void setForumList(List<Forum> forums) {
         forumList.clear();
         forumList.addAll(forums);
-        forumListFull = new ArrayList<>(forums); // Sync backup list
+        forumListFull = new ArrayList<>(forums);
         notifyDataSetChanged();
     }
 
     public void addForum(Forum forum) {
         forumList.add(forum);
-        forumListFull.add(forum); // Sync backup list
+        forumListFull.add(forum);
         notifyItemInserted(forumList.size() - 1);
     }
 
     public void updateForum(Forum forum) {
-        // Update main list
         int index = forumList.indexOf(forum);
         if (index != -1) {
             forumList.set(index, forum);
             notifyItemChanged(index);
         }
-        // Update backup list
         int fullIndex = forumListFull.indexOf(forum);
         if (fullIndex != -1) {
             forumListFull.set(fullIndex, forum);
@@ -134,23 +117,25 @@ public class ForumAdapter extends RecyclerView.Adapter<ForumAdapter.ViewHolder> 
     }
 
     public void removeForum(Forum forum) {
-        // Remove from main list
         int index = forumList.indexOf(forum);
         if (index != -1) {
             forumList.remove(index);
             notifyItemRemoved(index);
         }
-        // Remove from backup list
         forumListFull.remove(forum);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvDescription;
+        // NEW: Add tvPostCount here
+        TextView tvName, tvDescription, tvPostCount;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvForumName);
             tvDescription = itemView.findViewById(R.id.tvForumDescription);
+
+            // NEW: Bind it to the ID from your XML
+            tvPostCount = itemView.findViewById(R.id.tvPostCount);
         }
     }
 }

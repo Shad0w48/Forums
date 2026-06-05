@@ -14,6 +14,7 @@ public class Post  implements Serializable {
 
     String forumId;
     String postPic;
+    int commentCount = 0;
 
 
 
@@ -47,7 +48,13 @@ public class Post  implements Serializable {
     }
 
 
+    public int getCommentCount() {
+        return commentCount;
+    }
 
+    public void setCommentCount(int commentCount) {
+        this.commentCount = commentCount;
+    }
 
     public String getPostId() {
         return postId;
@@ -118,9 +125,8 @@ public class Post  implements Serializable {
     }
 
     public void setForumId(String forumId) {
-        forumId = forumId;
+        this.forumId = forumId;
     }
-
     @Override
     public String toString() {
         return "Post{" +

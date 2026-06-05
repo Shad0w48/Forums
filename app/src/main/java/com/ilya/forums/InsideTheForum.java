@@ -158,6 +158,15 @@ public class InsideTheForum extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        // Every time the user returns to this screen, re-download the posts!
+        // Make sure to pass whatever variable holds your current forum's ID or Name here:
+        if (forumId != null) {
+            readPosts(forumId);
+        }
+    }
+    @Override
     public void onClick(View view) {
         if (view == btnNewPost) {
             Intent goAddPost = new Intent(InsideTheForum.this, CreateNewPost.class);

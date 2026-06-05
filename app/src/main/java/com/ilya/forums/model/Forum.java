@@ -14,6 +14,7 @@ public class Forum {
     private String description;
     private User creator;
     private Date createdAt;
+    private int postCount = 0;
 
     public Forum(String forumId, String name, String description, User creator, Date createdAt) {
         this.forumId = forumId;
@@ -32,6 +33,13 @@ public class Forum {
     public Forum() {
     }
 
+    public int getPostCount() {
+        return postCount;
+    }
+
+    public void setPostCount(int postCount) {
+        this.postCount = postCount;
+    }
     public String getForumId() {
         return forumId;
     }

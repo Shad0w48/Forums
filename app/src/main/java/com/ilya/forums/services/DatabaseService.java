@@ -408,8 +408,41 @@ public class DatabaseService {
     ///             if the operation fails, the callback will receive an exception
     /// @see DatabaseCallback
     /// @see Post
+    /// create a new post in the database AND increment the forum's post count
     public void createNewPost(@NotNull final Post post, @Nullable final DatabaseCallback<Void> callback) {
-        writeData( POSTS_PATH + "/" + post.getForumId()+"/"+post.getPostId(), post, callback);
+        // 1. Save the actual post to the POSTS_PATH
+        writeData( POSTS_PATH + "/" + post.getForumId()+"/"+post.getPostId(), post, new DatabaseCallback<Void>() {
+            @Override
+            public void onCompleted(Void object) {
+
+                // 2. If the post saved successfully, run a transaction to add +1 to the Forum's postCount
+                runTransaction(FORUMS_PATH + "/" + post.getForumId(), Forum.class, currentForum -> {
+                    if (currentForum != null) {
+                        // Increase the count by 1
+                        currentForum.setPostCount(currentForum.getPostCount() + 1);
+                    }
+                    return currentForum;
+                }, new DatabaseCallback<Forum>() {
+                    @Override
+                    public void onCompleted(Forum object) {
+                        // Both the post and the count update were successful!
+                        if (callback != null) callback.onCompleted(null);
+                    }
+
+                    @Override
+                    public void onFailed(Exception e) {
+                        Log.e(TAG, "Failed to update forum post count", e);
+                        if (callback != null) callback.onFailed(e);
+                    }
+                });
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+                Log.e(TAG, "Failed to create post", e);
+                if (callback != null) callback.onFailed(e);
+            }
+        });
     }
 
     /// get a post from the database

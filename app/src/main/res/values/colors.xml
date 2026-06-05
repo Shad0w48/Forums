@@ -2,4 +2,9 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="app_background">#F7FFFF</color>
+    <color name="bubble_background">#FFFFFF</color>
+    <color name="forum_title_blue">#3B82F6</color>
+    <color name="post_title_purple">#8B5CF6</color>
+    <color name="text_primary">#1E293B</color>
 </resources>

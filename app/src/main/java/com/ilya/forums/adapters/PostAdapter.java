@@ -60,12 +60,18 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         }
 
         // 2. Set Image Indicator icon visibility
-        // Logic: Show the icon if the base64 string is not null or empty
         if (post.getPostPic() != null && !post.getPostPic().trim().isEmpty()) {
             holder.ivHasImageIndicator.setVisibility(View.VISIBLE);
         } else {
             holder.ivHasImageIndicator.setVisibility(View.GONE);
         }
+
+        // 3. NEW: Set Net Score (Upvotes minus Downvotes)
+        int netScore = post.getUpVote() - post.getDownVote();
+        holder.tvVoteCount.setText(String.valueOf(netScore));
+
+        // 4. NEW: Set Comment Count
+        holder.tvCommentCount.setText(String.valueOf(post.getCommentCount()));
 
         // Click Handling
         holder.itemView.setOnClickListener(v -> {
@@ -109,15 +115,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     }
 
     static class PostViewHolder extends RecyclerView.ViewHolder {
-        TextView title, tvPostDate;
+        // NEW: Added the Vote and Comment TextViews here
+        TextView title, tvPostDate, tvVoteCount, tvCommentCount;
         ImageView ivHasImageIndicator;
 
         PostViewHolder(View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.tvPostTitle);
-            // Initialize new IDs from your item_post.xml
             tvPostDate = itemView.findViewById(R.id.tvPostDate);
             ivHasImageIndicator = itemView.findViewById(R.id.ivHasImageIndicator);
+
+            // NEW: Connected them to the XML IDs
+            tvVoteCount = itemView.findViewById(R.id.tvVoteCount);
+            tvCommentCount = itemView.findViewById(R.id.tvCommentCount);
         }
     }
 }
