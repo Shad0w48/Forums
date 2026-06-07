@@ -87,6 +87,7 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
         } else {
             isCurrentUser = false;
             btnSignOut.setVisibility(View.GONE); // מסתירים לחלוטין אם זה פרופיל של מישהו אחר
+            etUserPassword.setVisibility(View.GONE); //מסתירים את הסיסמא במידה והמשתמש שצופה בפרופיל אינו המשתמש עצמו
         }
 
         showUserProfile();

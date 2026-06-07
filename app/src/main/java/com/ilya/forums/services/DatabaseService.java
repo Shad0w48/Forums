@@ -41,6 +41,7 @@ public class DatabaseService {
     /// tag for logging
     /// @see Log
     private static final String TAG = "DatabaseService";
+    // Database Paths: These act like folders in your Firebase Realtime Database
 
     /// paths for different data types in the database
     /// @see DatabaseService#readData(String)
@@ -49,6 +50,12 @@ public class DatabaseService {
                                 COMMENTS_PATH = "posts_comments",
                                 FORUMS_PATH = "forums",
                                 VOTES_PATH = "votes";
+    // ============================================================================
+    // CALLBACK INTERFACE
+    // Because Firebase operations are "asynchronous" (they happen in the background),
+    // we can't just return a value like a normal function. Instead, we use this
+    // "Intercom" system to send the data back once the background task finishes.
+    // ============================================================================
     /// callback interface for database operations
     /// @param <T> the type of the object to return
     /// @see DatabaseCallback#onCompleted(Object)

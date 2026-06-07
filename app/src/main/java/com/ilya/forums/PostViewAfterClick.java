@@ -331,29 +331,7 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
         );
     }
 
-    private void refreshPostDataFromServer() {
-        // FIX #3: Strictly use ONLY the real Forum ID.
-        String targetForumKey = thePost.getForumId();
 
-        if (targetForumKey == null || targetForumKey.trim().isEmpty()) {
-            Log.e(TAG, "Cannot refresh post: forumId is missing.");
-            return;
-        }
-
-        databaseService.getPost(targetForumKey, thePost.getPostId(), new DatabaseService.DatabaseCallback<Post>() {
-            @Override
-            public void onCompleted(Post updatedPost) {
-                if (updatedPost != null) {
-                    thePost = updatedPost;
-                    up = updatedPost.getUpVote();
-                    down = updatedPost.getDownVote();
-                    updateVoteText();
-                }
-            }
-            @Override
-            public void onFailed(Exception e) {}
-        });
-    }
 
     @Override
     protected void onStop() {
@@ -397,7 +375,8 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
                     }
 
                     if (postCreator != null) {
-                        triggerNotification(postCreator.getFcmToken(), "New Reply!", currentUser.getFname() + " replied to your post");
+                        // Pass the ID instead of the token
+                        triggerNotification(postCreator.getId(), "New Reply!", currentUser.getFname() + " replied to your post");
                     }
                 }
                 @Override
@@ -410,13 +389,17 @@ public class PostViewAfterClick extends AppCompatActivity implements View.OnClic
         dialogView.findViewById(R.id.btnCancelComment).setOnClickListener(v -> dialog.dismiss());
     }
 
-    private void triggerNotification(String targetToken, String title, String message) {
-        if (targetToken == null || targetToken.isEmpty()) return;
+    private void triggerNotification(String targetUserId, String title, String message) {
+        if (targetUserId == null || targetUserId.isEmpty()) return;
+
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("NotificationRequests").push();
         HashMap<String, String> map = new HashMap<>();
-        map.put("token", targetToken);
+
+        // We send the ID now, and let our index.js do the hard work of finding the token!
+        map.put("targetUserId", targetUserId);
         map.put("title", title);
         map.put("message", message);
+
         ref.setValue(map);
     }
 
