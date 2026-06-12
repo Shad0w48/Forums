@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class User implements Serializable {
     String id, fname, lname, email, phone, password;
     private String fcmToken="";
-
+    Boolean isBanned = false;
 
 
 
@@ -76,7 +76,13 @@ public class User implements Serializable {
         this.isAdmin = false;
     }
 
+    public Boolean getIsBanned() {
+        return isBanned != null ? isBanned : false; // prevents null pointer exceptions
+    }
 
+    public void setIsBanned(Boolean isBanned) {
+        this.isBanned = isBanned;
+    }
 
     public String getId() {
         return id;

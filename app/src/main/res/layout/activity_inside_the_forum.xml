@@ -9,12 +9,11 @@
     android:background="@color/app_background"
     tools:context=".InsideTheForum">
 
-    <!-- Header Section -->
     <ImageButton
         android:id="@+id/btnBackFromInsideForum"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="Back"
         android:src="@android:drawable/ic_menu_revert"
         app:layout_constraintStart_toStartOf="parent"
@@ -59,7 +58,6 @@
         app:layout_constraintTop_toBottomOf="@+id/btnBackFromInsideForum"
         tools:text="Discuss your favorite games and share strategies with the community." />
 
-    <!-- Search Bar -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/layoutSearchPosts"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -69,7 +67,7 @@
         android:layout_marginEnd="8dp"
         app:hintEnabled="false"
         app:startIconDrawable="@android:drawable/ic_menu_search"
-        app:layout_constraintEnd_toStartOf="@+id/btnNewPost"
+        app:layout_constraintEnd_toStartOf="@+id/btnSortToggle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvDescriptionOfChosenForum">
 
@@ -82,7 +80,19 @@
             android:paddingVertical="12dp" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- New Post: Cyan Button style (compact version) -->
+    <ImageButton
+        android:id="@+id/btnSortToggle"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="8dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_swap_vert"
+        android:contentDescription="Sort Posts"
+        app:layout_constraintBottom_toBottomOf="@+id/layoutSearchPosts"
+        app:layout_constraintEnd_toStartOf="@+id/btnNewPost"
+        app:layout_constraintStart_toEndOf="@+id/layoutSearchPosts"
+        app:layout_constraintTop_toTopOf="@+id/layoutSearchPosts" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnNewPost"
         android:layout_width="wrap_content"
@@ -96,7 +106,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/layoutSearchPosts" />
 
-    <!-- RecyclerView for Posts -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPostOfForum"
         android:layout_width="0dp"

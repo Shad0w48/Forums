@@ -1,7 +1,6 @@
 package com.ilya.forums;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,124 +20,123 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.ilya.forums.model.Forum;
-import com.ilya.forums.model.Post;
 import com.ilya.forums.model.User;
 import com.ilya.forums.services.DatabaseService;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+// ============================================================================
+// CREATE NEW FORUM ACTIVITY
+// This screen allows an Admin to create a new forum category (e.g., "Tech", "Cars").
+// Once created, it updates the database and triggers a notification for everyone.
+// ============================================================================
 public class CreateNewForum extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "Create Forum";
+
+    // UI Elements
     TextView tvCreateForumtitle;
-    Button btnCreateForum,btnBack;
-    EditText etTitle,etContent;
+    Button btnCreateForum, btnBack;
+    EditText etTitle, etContent;
 
-
-
-    String userId, title, description,forumId;
-
-    Timestamp timestamp;
+    // Data Variables
+    String userId, title, description;
     private DatabaseService databaseService;
     private FirebaseAuth mAuth;
     User currentUser;
-
-
-    ArrayList<Post> postListStart = new ArrayList<>();
-    private String postId;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_create_new_forum);
+
+        // Handle window insets for modern full-screen designs
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        databaseService=DatabaseService.getInstance();
+        // 1. Initialize Firebase services
+        databaseService = DatabaseService.getInstance();
         mAuth = FirebaseAuth.getInstance();
-        userId=mAuth.getUid();
+        userId = mAuth.getUid();
 
-        databaseService.getUser(userId,  new DatabaseService.DatabaseCallback<User>() {
+        // 2. Load the current user profile (we need this to attach the Creator's info to the Forum)
+        databaseService.getUser(userId, new DatabaseService.DatabaseCallback<User>() {
             @Override
             public void onCompleted(User user) {
-                currentUser= new User (user.getId(), user.getFname(), user.getLname());
-
+                // Keep a simplified version of the user for the Forum model
+                currentUser = new User(user.getId(), user.getFname(), user.getLname());
             }
-
             @Override
-            public void onFailed(Exception e) {
-
-            }
+            public void onFailed(Exception e) { /* Handle error */ }
         });
 
+        // 3. Link UI elements
+        tvCreateForumtitle = findViewById(R.id.tvCreateForum);
+        btnCreateForum = findViewById(R.id.btnCreateForum);
+        etTitle = findViewById(R.id.etForumTitle);
+        etContent = findViewById(R.id.etForumDescription);
+        btnBack = findViewById(R.id.btnBackFromAddForum);
 
-        tvCreateForumtitle=findViewById(R.id.tvCreateForum);
-        btnCreateForum=findViewById(R.id.btnCreateForum);
-        etTitle=findViewById(R.id.etForumTitle);
-        etContent=findViewById(R.id.etForumDescription);
-
-       btnCreateForum.setOnClickListener(this);
-       btnBack=findViewById(R.id.btnBackFromAddForum);
-       btnBack.setOnClickListener(this);
-
-
-
-
-        }
+        // 4. Attach click listeners
+        btnCreateForum.setOnClickListener(this);
+        btnBack.setOnClickListener(this);
+    }
 
     @Override
     public void onClick(View v) {
-
-        if(v==btnCreateForum){
-            timestamp = Timestamp.now();
-
-
+        // --- BUTTON: CREATE FORUM ---
+        if (v == btnCreateForum) {
             title = etTitle.getText().toString();
             description = etContent.getText().toString();
-            /// Validate input
-            Log.d(TAG, "onClick: Registering user...");
-            String forumId=databaseService.generateForumId()    ;
 
+            // Generate a unique ID for the new forum category
+            String forumId = databaseService.generateForumId();
             Date currentDate = new Date();
-            Forum newForum=new Forum(forumId,title,description,currentUser,currentDate);
 
+            // Package the data into our Forum model
+            Forum newForum = new Forum(forumId, title, description, currentUser, currentDate);
+
+            // Send to database
             databaseService.createNewForum(newForum, new DatabaseService.DatabaseCallback<Void>() {
                 @Override
                 public void onCompleted(Void object) {
+                    // --- TRIGGER GLOBAL NOTIFICATION ---
+                    // By pushing a new record to "GlobalNotifications", our index.js
+                    // Cloud Function will wake up and send a push message to ALL users!
+                    DatabaseReference globalRef = FirebaseDatabase.getInstance()
+                            .getReference("GlobalNotifications")
+                            .push();
 
-                    // בתוך CreateNewForum.java
-                    DatabaseReference globalRef = FirebaseDatabase.getInstance().getReference("GlobalNotifications").push();
+                    //בניית ההודעה+
                     HashMap<String, String> data = new HashMap<>();
                     data.put("title", "פורום חדש נוצר!");
                     data.put("message", "בואו לראות את הפורום: " + title);
                     globalRef.setValue(data);
 
-
+                    Toast.makeText(CreateNewForum.this, "Forum Created!", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onFailed(Exception e) {
-
+                    Toast.makeText(CreateNewForum.this, "Failed to create", Toast.LENGTH_SHORT).show();
                 }
             });
-            Intent GoBack = new Intent(this,AdminActivity.class);
 
-            startActivity(GoBack);
-
-
-        }
-        if(v==btnBack){
-            Intent GoBack = new Intent(this,AdminActivity.class);
-            startActivity(GoBack);
+            // Return to Admin screen
+            Intent goBack = new Intent(this, AdminActivity.class);
+            startActivity(goBack);
+            finish(); // Close this screen so the user doesn't come back to it with 'back' button
         }
 
+        // --- BUTTON: BACK ---
+        else if (v == btnBack) {
+            Intent goBack = new Intent(this, AdminActivity.class);
+            startActivity(goBack);
+            finish();
+        }
     }
-
-
 }

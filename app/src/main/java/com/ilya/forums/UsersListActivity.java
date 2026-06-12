@@ -19,11 +19,15 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.ilya.forums.R;
 import com.ilya.forums.adapters.UserAdapter;
 import com.ilya.forums.model.User;
 import com.ilya.forums.services.DatabaseService;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class UsersListActivity extends AppCompatActivity {
@@ -65,8 +69,23 @@ public class UsersListActivity extends AppCompatActivity {
 
             @Override
             public void onLongUserClick(User user) {
-                // Handle long user click
-                Log.d(TAG, "User long clicked: " + user);
+                Log.d(TAG, "Requesting to ban/delete user auth: " + user.getId());
+
+                // Send a request to the Cloud Function via the Database
+                DatabaseReference deleteRef = FirebaseDatabase.getInstance().getReference("DeleteRequests").push();
+
+                // Pass the ID of the clicked user
+                HashMap<String, String> requestData = new HashMap<>();
+                requestData.put("uid", user.getId());
+
+                deleteRef.setValue(requestData).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "Delete request sent successfully.");
+                        // You can show a Toast here if you have context
+                    } else {
+                        Log.e(TAG, "Failed to send delete request", task.getException());
+                    }
+                });
             }
         });
         usersList.setAdapter(userAdapter);

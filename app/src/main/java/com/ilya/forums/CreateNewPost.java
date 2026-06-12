@@ -33,8 +33,12 @@ import com.ilya.forums.services.DatabaseService;
 import com.ilya.forums.utils.ImageUtil;
 
 import java.util.Date;
-import java.util.Map;
 
+// ============================================================================
+// CREATE NEW POST ACTIVITY
+// Handles the creation of a new post, including image capturing, storage
+// permissions, and pushing data to the Firebase Realtime Database.
+// ============================================================================
 public class CreateNewPost extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "Create Post";
 
@@ -49,19 +53,16 @@ public class CreateNewPost extends AppCompatActivity implements View.OnClickList
     private MaterialButton btnRemovePhoto;
     private ImageView imgNewPost;
 
-    private boolean isImageSelected = false;
+    private boolean isImageSelected = false; // Flag to track if the user attached a photo
 
     private Button btnBack;
     private String forumId = "";
-    int SELECT_PICTURE = 200;
+    int SELECT_PICTURE = 200; // Request code for gallery
 
+    // --- LAUNCHERS FOR MODERN ANDROID ---
     private ActivityResultLauncher<Intent> captureImageLauncher;
-
-    // רכיב חדש לבקשת הרשאות מרובות
-    private ActivityResultLauncher<String[]> permissionLauncher;
-
-    // משתנה עזר שיזכור איזו פעולה המשתמש רצה לבצע לפני שביקשנו הרשאה
-    private String pendingAction = "";
+    private ActivityResultLauncher<String[]> permissionLauncher; // Handles camera/storage permissions
+    private String pendingAction = ""; // Remembers what the user was doing before a permission prompt appeared
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +81,7 @@ public class CreateNewPost extends AppCompatActivity implements View.OnClickList
         userId = mAuth.getUid();
         forumId = getIntent().getStringExtra("forumId");
 
-        // UI References
+        // UI Initialization
         tvCreateNewPost = findViewById(R.id.tvNewPostTitle);
         btnAddPost = findViewById(R.id.btnAddNewPost);
         etPostTitle = findViewById(R.id.etNewPostTitle);
@@ -91,38 +92,39 @@ public class CreateNewPost extends AppCompatActivity implements View.OnClickList
         btnRemovePhoto = findViewById(R.id.btnRemovePhoto);
         btnBack = findViewById(R.id.btnback6);
 
-        // Click Listeners
+        // Listeners
         btnAddPost.setOnClickListener(this);
         btnGallery.setOnClickListener(this);
         btnTakePic.setOnClickListener(this);
         btnBack.setOnClickListener(this);
         btnRemovePhoto.setOnClickListener(v -> removeSelectedImage());
 
-        // רישום ה-Launcher לטיפול בתשובת ההרשאות של המשתמש
+        // --- PERMISSION LAUNCHER ---
+        // This modern API checks for permissions (Camera/Storage) and fires the relevant action after approval
         permissionLauncher = registerForActivityResult(
                 new ActivityResultContracts.RequestMultiplePermissions(),
                 result -> {
                     boolean cameraGranted = result.getOrDefault(Manifest.permission.CAMERA, false);
                     boolean storageGranted;
 
+                    // Newer Android versions (Tiramisu/API 33+) use READ_MEDIA_IMAGES instead of READ_EXTERNAL_STORAGE
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         storageGranted = result.getOrDefault(Manifest.permission.READ_MEDIA_IMAGES, false);
                     } else {
                         storageGranted = result.getOrDefault(Manifest.permission.READ_EXTERNAL_STORAGE, false);
                     }
 
-                    // בדיקה מה המשתמש ביקש ואיזה אישור התקבל
                     if (pendingAction.equals("CAMERA") && cameraGranted) {
                         captureImageFromCameraDirect();
                     } else if (pendingAction.equals("GALLERY") && storageGranted) {
                         selectImageFromGalleryDirect();
                     } else {
-                        Toast.makeText(this, "יש לאשר את ההרשאה המתאימה כדי להשתמש ברכיב המדיה", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Permissions required for media access", Toast.LENGTH_SHORT).show();
                     }
-                    pendingAction = ""; // איפוס הפעולה הממתינה
+                    pendingAction = "";
                 });
 
-        // Camera Launcher הקיים שלך
+        // Camera Launcher: Handles the result after the Camera app finishes
         captureImageLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -133,7 +135,7 @@ public class CreateNewPost extends AppCompatActivity implements View.OnClickList
                     }
                 });
 
-        // Get user info
+        // Fetch User Info
         databaseService.getUser(userId, new DatabaseService.DatabaseCallback<User>() {
             @Override
             public void onCompleted(User user) {
@@ -150,50 +152,48 @@ public class CreateNewPost extends AppCompatActivity implements View.OnClickList
             Intent goBack = new Intent(CreateNewPost.this, InsideTheForum.class);
             goBack.putExtra("ForumId", forumId);
             startActivity(goBack);
-            return;
-        }
-
-        if (v == btnGallery) {
+            finish();
+        } else if (v == btnGallery) {
             checkStoragePermissionAndOpenGallery();
-            return;
-        }
-
-        if (v == btnTakePic) {
+        } else if (v == btnTakePic) {
             checkCameraPermissionAndCapture();
-            return;
-        }
-
-        if (v == btnAddPost) {
+        } else if (v == btnAddPost) {
             publishPost();
         }
     }
 
+    // Pushes the post object to Firebase Database
     private void publishPost() {
         title = etPostTitle.getText().toString();
         description = etPostInfo.getText().toString();
 
         String imagePic = "";
         if (isImageSelected) {
+            // Converts the bitmap to a Base64 string for easy storage in Realtime Database
             imagePic = ImageUtil.convertTo64Base(imgNewPost);
         }
 
         String postId = databaseService.generatePostId();
-        Date currentDate = new Date();
-        Post newPost = new Post(postId, title, description, currentUser, currentDate, forumId, imagePic);
+        Post newPost = new Post(postId, title, description, currentUser, new Date(), forumId, imagePic);
 
         databaseService.createNewPost(newPost, new DatabaseService.DatabaseCallback<Void>() {
             @Override
             public void onCompleted(Void object) {
-                startActivity(new Intent(CreateNewPost.this, UserMain.class));
+                Intent goBack1 = new Intent(CreateNewPost.this, InsideTheForum.class);
+                goBack1.putExtra("ForumId", forumId);
+                startActivity(goBack1);
                 finish();
+                Toast.makeText(CreateNewPost.this, "Post Added", Toast.LENGTH_SHORT).show();
             }
             @Override
             public void onFailed(Exception e) {
                 Log.e(TAG, "Error: " + e.toString());
+                Toast.makeText(CreateNewPost.this, "Failed to Create Post", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    // --- UI HELPERS FOR IMAGES ---
     private void applySelectedImageState() {
         isImageSelected = true;
         imgNewPost.setAlpha(1.0f);
@@ -209,15 +209,10 @@ public class CreateNewPost extends AppCompatActivity implements View.OnClickList
         btnRemovePhoto.setVisibility(View.GONE);
     }
 
-    // --- ניהול הרשאות ופתיחת מדיה מעודכן ---
-
+    // --- PERMISSION CHECKS ---
     private void checkStoragePermissionAndOpenGallery() {
-        String permission;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permission = Manifest.permission.READ_MEDIA_IMAGES;
-        } else {
-            permission = Manifest.permission.READ_EXTERNAL_STORAGE;
-        }
+        String permission = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) ?
+                Manifest.permission.READ_MEDIA_IMAGES : Manifest.permission.READ_EXTERNAL_STORAGE;
 
         if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
             selectImageFromGalleryDirect();

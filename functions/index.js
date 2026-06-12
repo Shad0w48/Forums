@@ -104,3 +104,52 @@ exports.sendGlobalNotification = onValueCreated({
         return event.data.ref.remove(); // Clean up the database
     }
 });
+exports.deleteUserAccount = onValueCreated({
+    ref: "/DeleteRequests/{requestId}",
+    instance: "forums-da48c-default-rtdb",
+    region: "us-central1"
+}, async (event) => {
+    // 1. Read the data sent from the Android app
+    const requestData = event.data.val();
+
+    // If the request is empty or missing a uid, stop immediately.
+    if (!requestData || !requestData.uid) return;
+
+    const targetUid = requestData.uid;
+
+    try {
+        // 2. Delete the user from Firebase Authentication
+        // This permanently destroys their login credentials so they can never sign in again.
+        await admin.auth().deleteUser(targetUid);
+        console.log("Successfully deleted user from Auth:", targetUid);
+
+    } catch (error) {
+        // 3. Handle Auth Errors Gracefully
+        // If the admin clicked twice and the user is already deleted, Firebase throws an error.
+        // We catch it so the function doesn't crash, allowing the rest of the code to run.
+        if (error.code === 'auth/user-not-found') {
+            console.log("User was already deleted from Auth. Moving on...");
+        } else {
+            console.error("Error deleting user from Auth:", error);
+        }
+    }
+
+    try {
+        // 4. Mark the user as Banned in the Realtime Database
+        // We update their profile in the 'users' node rather than deleting it.
+        // This keeps their name visible on old posts/comments, but adds an 'isBanned' flag.
+        await admin.database().ref(`/users/${targetUid}`).update({
+            isBanned: true
+        });
+        console.log("Successfully marked user as banned in Database:", targetUid);
+
+    } catch (error) {
+        console.error("Error updating user's isBanned status in database:", error);
+    } finally {
+        // 5. Clean up the Request Queue
+        // The 'finally' block is crucial. It ALWAYS runs, regardless of whether
+        // the steps above succeeded or failed. This guarantees the request is deleted
+        // so you don't end up with hundreds of stuck requests in your database.
+        return event.data.ref.remove();
+    }
+});

@@ -70,31 +70,34 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             initials += user.getLname().charAt(0);
         }
         holder.tvInitials.setText(initials.toUpperCase());
-        holder.tvName.setText(user.getFname() + " " + user.getLname());
 
-        // --- ADMIN CHIP (Optional) ---
-        // You've got the logic here ready to uncomment if you want to highlight admins!
-        /*
-        if (user.getIsAdmin()) {
-            holder.chipRole.setVisibility(View.VISIBLE);
-            holder.chipRole.setText("Admin");
+        // --- BANNED UI LOGIC ---
+        if (user.getIsBanned()) {
+            // Change text color to Red and append the tag
+            holder.tvName.setTextColor(android.graphics.Color.RED);
+            holder.tvName.setText(user.getFname() + " " + user.getLname() + " / Banned");
+
+            // Disable the long click so the admin can't accidentally spam the delete function
+            holder.itemView.setOnLongClickListener(null);
         } else {
-            holder.chipRole.setVisibility(View.GONE);
-        }
-        */
+            // CRITICAL: Reset to normal text color and name for recycled views
+            holder.tvName.setTextColor(android.graphics.Color.BLACK); // Change if your default is dark gray, etc.
+            holder.tvName.setText(user.getFname() + " " + user.getLname());
 
-        // Attach click listeners to the whole row
+            // Re-attach the long click listener for active users
+            holder.itemView.setOnLongClickListener(v -> {
+                if (onUserClickListener != null) {
+                    onUserClickListener.onLongUserClick(user);
+                }
+                return true;
+            });
+        }
+
+        // Attach normal click listeners to the whole row
         holder.itemView.setOnClickListener(v -> {
             if (onUserClickListener != null) {
                 onUserClickListener.onUserClick(user);
             }
-        });
-
-        holder.itemView.setOnLongClickListener(v -> {
-            if (onUserClickListener != null) {
-                onUserClickListener.onLongUserClick(user);
-            }
-            return true;
         });
     }
 
