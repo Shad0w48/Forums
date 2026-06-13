@@ -587,10 +587,12 @@ public class DatabaseService {
     /// @see Comment
     public  String generateCommentId() {return generateNewId(COMMENTS_PATH); }
     /// delete a comment from the database
+    /// @param postId the id of the post the comment belongs to (parentpostid)
     /// @param commentId the id of the comment to delete
     /// @param callback the callback to call when the operation is completed
-    public void deleteComment(@NotNull final String commentId, @Nullable final DatabaseCallback<Void> callback) {
-        deleteData(COMMENTS_PATH + "/" + commentId, callback);
+    public void deleteComment(@NotNull final String postId, @NotNull final String commentId, @Nullable final DatabaseCallback<Void> callback) {
+        // We must include the postId in the path to find the exact comment!
+        deleteData(COMMENTS_PATH + "/" + postId + "/" + commentId, callback);
     }
 
 
