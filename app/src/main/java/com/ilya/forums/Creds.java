@@ -1,7 +1,7 @@
 package com.ilya.forums;
 
 import android.os.Bundle;
-import android.widget.Button; // אל תשכח את הייבוא הזה!
+import android.widget.Button;
 import android.widget.ImageView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;

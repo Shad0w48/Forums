@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -82,10 +83,12 @@ public class UsersListActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         Log.d(TAG, "Delete request sent successfully.");
                         // You can show a Toast here if you have context
+                        Toast.makeText(UsersListActivity.this, "request to delete sent",Toast.LENGTH_SHORT).show();
                     } else {
                         Log.e(TAG, "Failed to send delete request", task.getException());
                     }
                 });
+                userAdapter.notifyDataSetChanged();
             }
         });
         usersList.setAdapter(userAdapter);
